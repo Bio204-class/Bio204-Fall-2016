@@ -168,6 +168,30 @@ $(document).ready(function () {
 <pre class="r"><code>&gt; m &lt;- c(NA, NaN, Inf, 3)
 &gt; is.nan(m)</code></pre>
 </div>
+<div id="lists-in-r" class="section level1">
+<h1>Lists in R</h1>
+<p>R lists are like vectors, but unlike a vector where all the elements are of the same type, the elements of a list can have arbitrary types (even other lists). Because vectors only hold a single type of data, they are more efficient, however lists are more flexible for representing heterogenous collections of data.</p>
+<p>Here’s examples of creating lists:</p>
+<pre class="r"><code>&gt; l &lt;- list('Bob', pi, 10, c(2,4,6,8))
+&gt; m &lt;- list(1, 2, 'three', list('a','b','c'))</code></pre>
+<div id="indexing-lists" class="section level2">
+<h2>Indexing lists</h2>
+<p>Indexing of lists is different than indexing of vectors. Double brackets (<code>x[[i]]</code>) return the element at index <span class="math inline">\(i\)</span>, single bracket return a list containing the element at index <span class="math inline">\(i\)</span>.</p>
+<pre class="r"><code>&gt; l[1] # single brackets
+&gt; l[[1]] # double brackets
+&gt; typeof(l[1])  # returns another list
+&gt; typeof(l[[1]]) # returns the element itself</code></pre>
+</div>
+<div id="getting-parts-of-lists-by-name" class="section level2">
+<h2>Getting parts of lists by name</h2>
+<p>The elements of a list can be given names, and those names objects can be accessed using the <code>$</code> operator. You can retrieve the names associated with a list using the <code>names()</code> function.</p>
+<pre class="r"><code>&gt; p &lt;- list(first.name='Alice', last.name=&quot;Qux&quot;, age=27, years.in.school=10)
+&gt; p$years.in.school
+&gt; p$first.name
+&gt; p$last.name
+&gt; names(p)</code></pre>
+</div>
+</div>
 <div id="writing-your-own-functions-in-r" class="section level1">
 <h1>Writing Your Own Functions in R</h1>
 <p>So far we’ve been using a variety of built in functions in R. However the real power of a programming language is the ability to write your own functions. Functions are a mechanism for organizing and astracting a set of related computations. We usually write functions to represent sets of computations that we apply frequently, or to represent some conceptually coherent set of manipulations to data.</p>
@@ -245,30 +269,6 @@ $(document).ready(function () {
 &gt; area.of.rectangle(len, width)
 &gt; area.of.triangle(base, height)</code></pre>
 <p>Note that if you change the source file, such as correcting a mistake or adding a new function, you need to call the <code>source</code> function again to make those changes available.</p>
-</div>
-<div id="lists-in-r" class="section level1">
-<h1>Lists in R</h1>
-<p>R lists are like vectors, but unlike a vector where all the elements are of the same type, the elements of a list can have arbitrary types (even other lists). Because vectors only hold a single type of data, they are more efficient, however lists are more flexible for representing heterogenous collections of data.</p>
-<p>Here’s examples of creating lists:</p>
-<pre class="r"><code>&gt; l &lt;- list('Bob', pi, 10, c(2,4,6,8))
-&gt; m &lt;- list(1, 2, 'three', list('a','b','c'))</code></pre>
-<div id="indexing-lists" class="section level2">
-<h2>Indexing lists</h2>
-<p>Indexing of lists is different than indexing of vectors. Double brackets (<code>x[[i]]</code>) return the element at index <span class="math inline">\(i\)</span>, single bracket return a list containing the element at index <span class="math inline">\(i\)</span>.</p>
-<pre class="r"><code>&gt; l[1] # single brackets
-&gt; l[[1]] # double brackets
-&gt; typeof(l[1])  # returns another list
-&gt; typeof(l[[1]]) # returns the element itself</code></pre>
-</div>
-<div id="getting-parts-of-lists-by-name" class="section level2">
-<h2>Getting parts of lists by name</h2>
-<p>The elements of a list can be given names, and those names objects can be accessed using the <code>$</code> operator. You can retrieve the names associated with a list using the <code>names()</code> function.</p>
-<pre class="r"><code>&gt; p &lt;- list(first.name='Alice', last.name=&quot;Qux&quot;, age=27, years.in.school=10)
-&gt; p$years.in.school
-&gt; p$first.name
-&gt; p$last.name
-&gt; names(p)</code></pre>
-</div>
 </div>
 <div id="simple-input-in-r" class="section level1">
 <h1>Simple Input in R</h1>
