@@ -1,0 +1,480 @@
+\documentclass{beamer}
+
+\input{../slidespreamble.tex}
+
+%===========================================================
+% Title Info
+\title{Bio 204: Biological Data Analysis}
+\subtitle{Introduction to R} % (optional)
+
+\author[P. Magwene]{Instructor: Paul M. Magwene}
+
+\date{Fall 2016}
+
+\begin{document}
+%===========================================================
+\begin{frame}
+\titlepage
+\end{frame}
+
+%===========================================================
+\begin{frame}
+  \frametitle{Overview of Lecture}
+
+\begin{itemize}
+		\item Introduction to R
+		\begin{itemize}
+			\item R resources
+			\item Important programming concepts
+			\item Introduction to data types and data structures in R 
+		\end{itemize}
+        \item Literate programming
+		\item Hands-On Session
+\end{itemize}
+
+\end{frame}
+
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{What is R?}
+\begin{itemize}
+
+\item `A language and environment for statistical computing and graphics'
+\item First developed in the mid-90s
+\item Derives from the S language
+\begin{itemize}
+	\item S was developed at Bell Labs in the mid-80s
+\end{itemize}
+
+\item Advantages
+
+	\begin{itemize}
+	\item Free and open-source
+	\item Much of the academic statistical community has adopted it
+	\item Active developer and user community
+	\item Wealth of built-in and user contributed libraries available for all types of analyses
+	\end{itemize}
+
+\item Disadvantages
+	\begin{itemize}
+		\item GUI not as well developed as commercial statistical packages
+			\begin{itemize}
+				\item S-Plus; site licensed by Duke - see OIT website
+			\end{itemize}
+		\item Has higher learning curve than some other simpler statistical software
+		\item Command-line can be intimidating
+	\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{R Resources on the Web}
+\begin{itemize}
+
+\item Home Page
+\begin{itemize}
+	\item \texttt{http://www.r-project.org}
+\end{itemize}
+
+\item Comprehensive R Archive Network (CRAN)
+\begin{itemize}
+	\item \texttt{http://cran.r-project.org/mirrors.html}
+	\item See especially the `Task Views'
+			\begin{itemize}
+				\item Statistical and population genetics
+				\item Environmental and ecological analysis
+				\item Spatial statistics
+			\end{itemize}
+\end{itemize}
+
+\item Introductions and Tutorials
+\begin{itemize}
+	\item see \texttt{http://cran.r-project.org/other-docs.html}
+\end{itemize}
+
+\end{itemize}
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+
+\begin{center}
+\LARGE{Programming Concepts \& Vocabulary}
+
+\end{center}
+\end{frame}
+%===========================================================
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{Some Important Programming Concepts}
+\begin{itemize}
+
+\item Data Types
+\begin{itemize}
+	\item refer to the types of values that can be represented in a computer program
+	\item determine the representation of values in memory
+	\item determine the operations you can perform on those values
+	\item Examples: integers, strings, floating point values
+\end{itemize}
+
+\item Data Structures
+\begin{itemize}
+	\item a way of storing and accessing collections of data
+	\item different structures are more efficient for particular types of operations
+	\item Examples: lists, hash tables, stacks, queues, trees
+\end{itemize}
+
+\item Variables
+\begin{itemize}
+	\item Variables are references to objects/values in memory
+	\item Think of them as labels that point to particular places in a computer's memory
+\end{itemize}
+
+
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{More Important Programming Concepts}
+\begin{itemize}
+
+\item Statement
+\begin{itemize}
+	\item an instruction that a computer program can execute
+	\item Example: \verb=print("Hello, World!")=
+\end{itemize}
+
+\item Operators
+\begin{itemize}
+	\item Symbols representing specific computations
+	\item Example: \verb!+, -, *! (addition, subtraction, multiplication)
+\end{itemize}
+
+
+\item Expression
+\begin{itemize}
+	\item a combination of values, variables, and operators
+	\item Example: \texttt{1 + 1}
+\end{itemize}
+
+
+\item Functions (subroutines, procedures, methods)
+\begin{itemize}
+	\item A piece of code that carries out a specific task, set of instructions, calculations, etc.
+	\item Typically used to encapsulate algorithms
+\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+
+\begin{center}
+\LARGE{Basic Data Types, Data Structures \\ and Operators in R}
+
+\end{center}
+\end{frame}
+%===========================================================
+
+
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{Arithmetic Operators and Mathematical Functions in R}
+
+
+\begin{Rcode}
+> 10 + 2 # addition
+[1] 12
+> 10 - 2 # subtraction
+[1] 8
+> 10 * 2 # multiplication
+[1] 20
+> 10 / 2 # division
+[1] 5
+> 10 ^ 2 # exponentiation
+[1] 100
+> 10 ** 2 # alternate exponentiation
+[1] 100
+> sqrt(10) # square root
+[1] 3.162278
+> 10 ^ 0.5 # same as square root
+[1] 3.162278
+> pi*(3)**2  # R knows some useful constants
+[1] 28.27433
+> exp(1) # exponential function
+[1] 2.718282
+\end{Rcode}
+
+\end{frame}
+%===========================================================
+
+
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{Numeric Data Types in R}
+\begin{itemize}
+
+\item Floating point values (`doubles')
+\begin{Rcode}
+> typeof(10.0)
+[1] "double"
+\end{Rcode}
+
+
+\item Integers
+\begin{itemize}
+  \item Default numeric type is double, must explicitly ask for integers if single values
+\end{itemize}
+\begin{Rcode}
+> typeof(as.integer(10))
+[1] "integer"
+> typeof(10L) # appending L is alternate way to get an integer
+[1] "integer"
+\end{Rcode}
+
+\item Complex numbers
+\begin{Rcode}
+> typeof(1 + 1i)
+[1] "complex"
+\end{Rcode}
+
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{Boolean Values and Operators and Comparison Operators }
+
+ Boolean (`logical') values represent binary True/False states.
+
+\begin{Rcode}
+> x <- TRUE
+> typeof(x)
+[1] "logical"
+> y <- FALSE
+> x <- T # shorthand for TRUE
+> y <- F # shorthand for FALSE
+\end{Rcode}
+
+\begin{Rcode}
+> TRUE & FALSE   # logical and
+[1] FALSE
+> TRUE | FALSE   # logical or
+[1] TRUE
+> !True          # logical negation
+[1] FALSE
+> !FALSE
+[1] TRUE
+> y <- FALSE
+> isTRUE(y)
+[1] FALSE
+\end{Rcode}
+
+\end{frame}
+%===========================================================
+
+
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{Comparison Operators}
+
+The common comparison operators when applied to numerical values return Boolean reults.
+
+\begin{Rcode}
+> 5 < 10  # less than
+[1] TRUE
+> 5 > 10 # greater than
+[1] FALSE
+> 10 <= (5 + 5) # less than or equal to
+[1] TRUE
+> 10 >= (5 + 5.1) # greater than or equal to
+[1] FALSE
+> 10 == (2 * 5)  # equality (not be be confused with =)
+[1] TRUE
+> 10 != (3 + 3 + 3 + 3) # not equal to
+[1] TRUE
+\end{Rcode}
+\end{frame}
+%===========================================================
+
+
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{Characters (strings) in R}
+
+
+Character strings are written between single or double quotes.
+
+\begin{Rcode}
+> x <- 'Hello' # or x <- "Hello"
+> typeof(x)
+[1] "character"
+> y < - "World"
+> paste(x,y)  # join strings
+[1] "Hello World"
+> z <- paste(x,y)
+> substr(z, 1, 3)
+[1] "Hel"
+> substr(z, 4, 8)
+[1] "lo Wo"
+\end{Rcode}
+
+
+
+\end{frame}
+%===========================================================
+
+
+
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{Simple Data Structures in R: Vectors}
+
+Vectors are the simplest data structure in R
+\begin{itemize}
+	\item vectors represent an ordered list of items
+\begin{Rcode}
+> x <- c(2,4,6,8)
+> y <- c('joe','bob','fred')
+\end{Rcode}
+
+	\item vectors have length (possibly zero) and type
+\begin{Rcode}
+> typeof(x)
+[1] "double"
+> length(x)
+[1] 4
+> typeof(y)
+[1] "character"
+\end{Rcode}
+
+
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{Simple Data Structures in R: Vectors}
+
+Accesing the objects in a vector is accomplished by `indexing':
+\begin{itemize}
+	\item The elements of the vector are assigned indices $1 \ldots n$ where $n$ is the length of the vector
+
+\begin{Rcode}
+> x <- c(2,4,6,8)
+> length(x)
+[1] 4
+> x[1]
+[1] 2
+> x[2]
+[1] 4
+> x[3]
+[1] 6
+> x[4]
+[1] 8
+\end{Rcode}
+
+
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{Simple Data Structures in R: Vectors}
+
+\begin{itemize}
+
+\item Single objects are usually represented by vectors as well
+\begin{Rcode}
+> x <- 10.0
+> length(x)
+[1] 1
+> x[1]
+[1] 10
+\end{Rcode}
+
+
+\item Every element in a vector is of the same type
+
+\begin{itemize}
+	\item If this is not the case the the values are coerced to enforce this rule
+\end{itemize}
+
+\begin{Rcode}
+> x <- c(1+1i, 2+1i, 'Fred', 10)
+> x
+[1] "1+1i" "2+1i" "Fred" "10"
+\end{Rcode}
+
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{Arithmetic Operators Work on Vectors in R}
+
+Most arithmetic operators and mathematical functions work element-by-element on vectors in R
+
+\begin{Rcode}
+> x <- c(2, 4, 6, 8)
+> y <- c(0, 1, 2, 3)
+> x + y
+[1]  2  5  8 11
+> x - y
+[1] 2 3 4 5
+> x * y
+[1]  0  4 12 24
+> x^2
+[1]  4 16 36 64
+> sqrt(x)
+[1] 1.414214 2.000000 2.449490 2.828427
+\end{Rcode}
+
+\end{frame}
+%===========================================================
+
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{Things to Remember}
+
+\begin{itemize}
+
+ \item Try it out - programming involves experimentation
+ \item Practice - learning to program, like learning a foreign language, requires lots of practice.
+ \item Persist - many new tools/concepts can be hard to grasp at first. Keep plugging away until you get that `Aha!' moment
+\end{itemize}
+
+
+\end{frame}
+%===========================================================
+
+
+
+
+\end{document}

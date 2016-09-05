@@ -1,0 +1,27 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{csvsimple}
+\usepackage{booktabs}
+
+\parskip=0.5em
+\parindent=0em 
+
+
+\begin{document}
+
+\section*{Dataset III}
+
+\textbf{Description:} Below is a simple  data set where two variables, which we'll call X and Y, have been measured on each of 11 individuals.
+
+\textbf{Goal:} summarize and describe the properties of this data set.
+
+\begin{center}
+\csvreader[
+tabular=rr, 
+table head=\toprule\textbf{X} & \textbf{Y}\\\midrule, 
+table foot=\bottomrule]
+{anscombe-3.csv}{}%
+{\csvcoli & \csvcolii}
+\end{center}
+
+\end{document}

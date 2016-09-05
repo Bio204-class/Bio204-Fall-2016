@@ -1,0 +1,57 @@
+---
+title: "Snippets"
+author: "Paul M. Magwene"
+date: "September 1, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# Lists in R
+
+R lists are like vectors, but unlike a vector where all the elements are of the same type, the elements of a list can have arbitrary types (even other lists). Because vectors only hold a single type of data, they are more efficient, however lists are more flexible for representing heterogenous collections of data.
+
+Here's examples of creating lists:
+```{r}
+l <- list('Bob', pi, 10, c(2,4,6,8))
+m <- list(1, 2, 'three', list('a','b','c'))
+```
+
+## Indexing lists
+Indexing of lists is different than indexing of vectors.  Double brackets (`x[[i]]`) return the element at index $i$, single bracket return a list containing the element at index $i$.
+
+```{r}
+l[1] # single brackets
+l[[1]] # double brackets
+typeof(l[1])  # returns another list
+typeof(l[[1]]) # returns the element itself
+```
+
+## Getting parts of lists by name
+The elements of a list can be given names, and those names objects can be accessed using the `$` operator. You can retrieve the names associated with a list using the `names()` function.
+
+```{r}
+p <- list(first.name='Alice', last.name="Qux", age=27, years.in.school=10)
+p$years.in.school
+p$first.name
+p$last.name
+names(p)
+```
+
+# Simple Input in R
+
+The `c()` and `scan()` functions are fine for
+creating small to medium vectors at the interpreter, but eventually
+you'll want to start manipulating larger collections of data. There are
+a variety of functions in R for retrieving data from files.
+
+The most convenient file format to work with are tab delimited text
+files. Text files have the advantage that they are human readable and
+are easily shared across different platforms. If you get in the habit of
+archiving data as text files you'll never find yourself in a situation
+where you're unable to retrieve important data because the binary data
+format has changed between versions of a program.

@@ -1,0 +1,308 @@
+---
+title: "Getting Your Feet Wet with R, Part II"
+author: "Paul M. Magwene"
+date: "September 2, 2016"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+    highlight: default    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = TRUE, eval = FALSE, comment=NA)
+```
+
+# More Useful Functions that Operate on Vectors
+
+In the last class we were introduced to a handful of useful functions that operate on vectors. These included
+
+* `sum`
+* `min`, `max`, and `range`
+* many mathematical functions such as `sin`, `cos`, `exp`, `log`, etc.
+* `seq` and `rep` for generating sequences
+* `sort`
+
+Since vector manipulation is so fundamental to R, let's take a look at some more functions that are convenient for working with vectors:
+
+```{r}
+x <- 1:10
+rev(x)        # reverse x
+head(x, n=3)  # get the first n elements of x
+tail(x, n=2)  # get the last n elements of x
+```
+
+```{r}
+y <- c(2, 4, 5, 6, 8)
+any(y > 5) # returns TRUE if any of the elements are TRUE
+all(y > 5) # returns TRUE if all of the elements are TRUE
+```
+
+```{r}
+# subset returns the elements of the the first argument
+# where the second argument is TRUE
+subset(y, y > 5) 
+y[y > 5]  # gives the same result
+
+# which returns the *INDICES* where the inpugt is TRUE
+which(y > 5)
+```
+
+
+# Testing for missing and infinite values
+
+It's often convenient to be able to determine if an element of  a vector is a missing values (`NA`) or is infinite (usually resulting from invalid inputs).
+
+```{r}
+a <- 3
+b <- NA
+w <- Inf
+y <- c(3, NA, Inf, 15, 11, NA, 1)
+is.na(b)  # tests if variable reprents a missing value
+is.na(w)
+is.na(y)  # can be applied to vectors
+is.infinite(b)  # tests if represents infinite value
+is.infinite(w)
+is.infinite(y)
+```
+
+There is a second type of "missing" value that is sometimes relevant, referred to as "Not a Number" (`NaN`). `NaN` values arise when a numerical computation can't return a sensible answer.  For example:
+
+```{r}
+0/0
+Inf - Inf
+```
+
+`is.na` returns `TRUE` for both `NA` and `NaN` values. To explicitly test for `NaN` values, use the `is.nan` function.
+
+```{r}
+m <- c(NA, NaN, Inf, 3)
+is.nan(m)
+```
+
+# Lists in R
+
+R lists are like vectors, but unlike a vector where all the elements are of the same type, the elements of a list can have arbitrary types (even other lists). Because vectors only hold a single type of data, they are more efficient, however lists are more flexible for representing heterogenous collections of data.
+
+Here's examples of creating lists:
+```{r}
+l <- list('Bob', pi, 10, c(2,4,6,8))
+m <- list(1, 2, 'three', list('a','b','c'))
+```
+
+## Indexing lists
+Indexing of lists is different than indexing of vectors.  Double brackets (`x[[i]]`) return the element at index $i$, single bracket return a list containing the element at index $i$.
+
+```{r}
+l[1] # single brackets
+l[[1]] # double brackets
+typeof(l[1])  # returns another list
+typeof(l[[1]]) # returns the element itself
+```
+
+## Getting parts of lists by name
+The elements of a list can be given names, and those names objects can be accessed using the `$` operator. You can retrieve the names associated with a list using the `names()` function.
+
+```{r}
+p <- list(first.name='Alice', last.name="Qux", age=27, years.in.school=10)
+p$years.in.school
+p$first.name
+p$last.name
+names(p)
+```
+
+# Writing Your Own Functions in R
+
+So far we've been using a variety of built in functions in R. However the real power of a programming language is the ability to write your own functions.  Functions are a mechanism for organizing and astracting a set of related computations.  We usually write functions to represent sets of computations that we apply frequently, or to represent some conceptually coherent set of manipulations to data.
+
+The general form of an R function is as follows:
+
+```{r}
+funcname <- function(arg1, arg2) {
+ # one or more expressions that operate on the fxn arguments
+ # last expression is the object returned
+ # or you can explicitly return an object
+}
+```
+
+To make this concrete, here's an example where we define a function in the interpreter
+
+```{r}
+area.of.circle <- function(r){
+  return(pi * r^2)
+}
+```
+
+The `area.of.circle` function takes one argument, `r`, and calculates the area of a circle with radius r. Having defined the function we can immediately put it to use
+
+```{r}
+area.of.circle(3)
+radius <- 4
+area.of.circle(4)
+```
+
+If you type a function name without parentheses R shows you the
+function's definition. This works for built-in functions as well
+(thought sometimes these functions are defined in C code in which case R
+will tell you that the function is a `.Primitive`).
+
+## Function arguments
+
+Function arguments can specify the data that a function operates on or
+parameters that the function uses. Function arguments can be either required or optional. In the case of optional arguments, a default value is assigned if the argument is not given.
+
+Take for example the `log` function. If you examine the help
+file for the `log` function (type `?log` now) you'll see that it takes two
+arguments, refered to as `x` and `base`. The
+argument `x` represents the numeric vector you pass to the
+function and is a required argument (see what happens when you type
+`log()` without giving an argument). The argument
+`base` is optional. By default the value of `base`
+is $e = 2.71828\ldots$. Therefore by default the `log`
+function returns natural logarithms. If you want logarithms to a
+different base you can change the `base` argument as in the
+following examples:
+
+```{r}
+log(2) # log of 2, base e
+log(2,2) # log of 2, base 2
+log(2, 4) # log of 2, base 4
+```
+
+Because base 2 and base 10 logarithms are fairly commonly used, there are convenient aliases for calling `log` with these bases.
+
+```{r}
+log2(8)
+log10(100)
+```
+
+## Writing functions with optional arguments
+
+To write a function that has an optional argument, you can simply specify the optional argument and its default value in the function definition as so:
+
+```{r}
+# a function to substitute missing values in a vector
+sub.missing <- function(x, sub.value = -99){
+  x[is.na(x)] <- sub.value
+  return(x)
+}
+```
+
+You can then use this function as so:
+```{r}
+m <- c(1, 2, NA, 4)
+sub.missing(m, -999)  # explicitly define sub.value
+sub.missing(m, sub.value = -333) # more explicit syntax
+sub.missing(m)   # use default sub.value
+m  # notice that m wasn't modified within the function
+```
+
+Notice that when we called `sub.missing` with our vector `m`, the vector did *not* get modified in the function body. Rather a new vector, `x` was created within the function and returned.  However, if you did the missing value subsitute outside of a function call, then the vector would be modified:
+
+```{r}
+n <- c(1, 2, NA, 4)
+n[is.na(n)] <- -99
+n
+```
+
+# Putting R functions in Scripts
+
+When you define a function at the interactive prompt and then close the
+interpreter your function definition will be lost. The simple way around
+this is to define your R functions in a script that you can than access
+at any time.
+
+In RStudio choose `File > New File > R Script`. This
+will bring up a blank editor window. Enter your function(s) into the editor
+and save the source file in your R working directory with a name like
+`myfxns.R`.
+
+```{r}
+# functions defined in myfxns.R
+
+area.of.circle <- function(r) {
+  pi * r^2
+}
+
+area.of.rectangle <- function(l, w) {
+  l * w
+}
+
+area.of.triangle <- function(b, h) {
+ 0.5 * b * h 
+}
+```
+
+
+Once your functions are in a script file you can make them accesible by
+using the `source` function, which reads takes the named file as input and evaluates any definitions or statements in the input file (See also the `Source`  button in the R Studio GUI):
+
+```{r}
+source("myfxns.R")
+radius <- 3
+len <- 4
+width <- 5
+base <- 6
+height <- 7
+area.of.circle(radius)
+area.of.rectangle(len, width)
+area.of.triangle(base, height)
+```
+
+Note that if you change the source file, such as correcting a mistake or adding a new function, you need to call the `source` function again to make those changes available.
+
+
+
+
+# Simple Input in R
+
+Data sets come in many different forms -- spreadsheets, text files, various binary formats, etc.  Today we'll look at how to read one of the simplest data representations, a table or spreadsheet saved in so called "Comma Separated Values" (CSV) format.  CSV files are plain text files, with each row of the file represent a row in a table.  The elements in the rows are separated by commas.  CSV files can be produced by all major spreadsheet programs, such as Excel, Google Sheets, Libre Office Calc, etc.
+
+
+Consider the following table:
+
+Age    Sex    Body Mass (kg)    Height (m)
+---    ---    --------------    ----------
+ 11     F     30                1.5
+ 10     M     28                1.4
+ 18     M     60                1.9
+  9     F     22                1.3
+ 22     F     50                1.7
+ 25     M     80                2.1
+
+Below is an example of what a simple CSV separated file might look like:
+```
+Age,Sex,Body Mass,Height
+11,F,30,1.5
+10,M,28,1.4
+18,M,60,1.9
+9,F,22,1.3
+22,F,50,1.7
+25,M,80,2.1
+```
+The first row of this example has the column headers.  Each of the subsequent rows holds information for one individual in the data set.  Some programs, such as Excel, will put quotes around entries with spaces in them.  
+
+The function `read.csv` (read the help file) provides a simple interface for reading CSV formatted data.  In your favorite spreadsheet program create a CSV formatted file with data from the table above, and save it with the name `example1.csv`. Upload `example1.csv` to your Docker instance, or place it in your working directory (see the section entitled "Navigating Directories in R" in the previous hands-on exercises).  Once you've done so, you can read the `example1.csv` file as so:
+
+```{r, eval = FALSE}
+data <- read.csv('example1.csv') 
+typeof(data)
+names(data) 
+```
+
+The `read.csv` function returns the data form the file in a list structure (actually a specialized list called a "data frame"; more on that in the next class session).  Notice how R changed the the column header `Body Mass` to `Body.Mass` to make it conform to R variable naming rules (variable names in R can't have spaces in them).
+
+Since `data` is a list, we can access the columns in `data` using the same name based access we saw when we introduced lists.
+
+```{r, eval=FALSE}
+data$Body.Mass
+mean(data$Body.Mass) # average mass of all individuals in sample
+# take subset of the data corresponding to males
+males <- subset(data, Sex == "M")  
+# take the subset corresponding to females
+females <- subset(data, Sex == "F")
+mean(data$Height)    # overall mean
+mean(males$Height)   # male mean
+mean(females$Height) # female mean
+```

@@ -1,0 +1,58 @@
+---
+title: "Working with Packages in R"
+author: "Paul M. Magwene"
+date: "September 5, 2016"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+    highlight: default  
+    fig_width: 5
+    fig_height: 3    
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = TRUE, eval = FALSE, 
+                      comment=NA, warning = FALSE)
+```
+  
+# Installing Packages in R
+  
+Your R Docker container on the OIT managed site comes with many additional
+packages pre-installed.  However, if you've installed R and RStudio on
+your laptop there are a number of useful packages you'll need to install. 
+Here we show the basic procedure for installing new packages in RStudio.
+
+## Installing Packages in RStudio
+
+Choose the `Packages` tab in the `Files/Plots/Packages/...` pane. The default 
+view in this pane shows you which packages are already installed, and the
+check boxes next to each package name indicate whether that package has already
+been loaded into the R interpretter.
+
+To install a new package, click the `Install` button in the `Packages` pane.  
+This will bring up a new dialog in which you can type the name of the package 
+you want to install.  Let's install three packages -- `ggplot2` (provides
+powerful plotting capabilities) and `dplyr` (provides powerful data filtering
+tools) and `tidyr` (provides useful functions for "tidying" messy data sets). 
+Make sure you  the `Install dependencies` box is checked in the install
+dialog.
+
+![](install-dialog.png)
+
+# Loading Packages
+
+The `library` function makes the functions and data defined in a package 
+available for use by the R interpretter.
+
+```{r, eval=TRUE}
+library(ggplot2)
+```
+
+Once the package is loaded you can use the functions:
+
+```{r, eval=TRUE, echo=TRUE}
+x <- rnorm(1000) # generate 1000 random draws from normal distn
+qplot(x, geom="histogram", bins=50) # qplot defined in ggplot2
+```
