@@ -55,3 +55,29 @@ are easily shared across different platforms. If you get in the habit of
 archiving data as text files you'll never find yourself in a situation
 where you're unable to retrieve important data because the binary data
 format has changed between versions of a program.
+
+
+
+# Data frame visualizations using ggplot
+
+Let's use the `ggplot2` library to create some quick visualizations of the 
+turtles data. If you haven't yet installed the ggplot2 library, see 
+[Working with Packages in R](https://bio204-class.github.io/Bio204-Fall-2016/installing-packages.html).
+
+First let's create a histogram depicting carapace width:
+```{r, echo=TRUE}
+library(ggplot2) # make ggplot2 fxns available
+ggplot(turtles, aes(x = width)) + 
+  geom_histogram(bins=10)
+```
+
+Now let's regenerate the histogram, splitting the data down by males and females,
+and adding some nicer labeling:
+
+```{r, echo=TRUE}
+ggplot(turtles, aes(x = width, fill=sex)) + 
+  geom_histogram(bins=10, alpha=0.5) +
+  labs(title = "Histogram of Carapace Width by Sex",
+       x = "Carapace width (cm)",
+       y = "Count")
+```

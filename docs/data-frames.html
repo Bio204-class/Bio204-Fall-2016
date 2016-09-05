@@ -123,33 +123,133 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#data-frames">Data Frames</a><ul>
+<li><a href="#introduction">Introduction</a></li>
 <li><a href="#creating-a-data-frame-in-the-console">Creating a data frame in the console</a></li>
-<li><a href="#reading-files-as-a-data-frame">Reading files as a data frame</a></li>
+<li><a href="#indexing-and-accessing-data-frames">Indexing and accessing data frames</a></li>
+<li><a href="#reading-files-as-data-frames">Reading files as data frames</a></li>
+<li><a href="#useful-functions-for-data-frames">Useful functions for data frames</a></li>
+<li><a href="#using-the-dplyr-library-to-manipulate-data-frames">Using the <code>dplyr</code> library to manipulate data frames</a><ul>
+<li><a href="#select"><code>select</code></a></li>
+<li><a href="#filter"><code>filter</code></a></li>
+<li><a href="#arrange"><code>arrange</code></a></li>
+<li><a href="#mutate"><code>mutate</code></a></li>
+<li><a href="#summarise"><code>summarise</code></a></li>
+<li><a href="#group_by"><code>group_by</code></a></li>
 </ul></li>
+<li><a href="#chaining-dplyr-functions-using-pipes">Chaining dplyr functions using pipes</a></li>
 </ul>
 </div>
 
-<div id="data-frames" class="section level1">
-<h1>Data Frames</h1>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
 <p>Along with vectors and lists, data frames are one of the core data structures when working in R. A data frame is essentially a list which represents a data table, where each column in the table has the same number of rows. Also unlike standard lists, the objects (columns) in a data frame must have names.</p>
-<div id="creating-a-data-frame-in-the-console" class="section level2">
-<h2>Creating a data frame in the console</h2>
+</div>
+<div id="creating-a-data-frame-in-the-console" class="section level1">
+<h1>Creating a data frame in the console</h1>
 <pre class="r"><code>&gt; age &lt;- as.integer(rnorm(10, mean = 30, sd = 5))
 &gt; sex &lt;- rep(c(&quot;M&quot;,&quot;F&quot;), 5)
 &gt; wt &lt;- rnorm(10, mean=50, sd = 8)
-&gt; data &lt;- data.frame(age = age, sex=sex, weight=wt)
-&gt; data  # examine the data frame</code></pre>
+&gt; df &lt;- data.frame(age = age, sex=sex, weight=wt)
+&gt; df  # examine the data frame</code></pre>
+</div>
+<div id="indexing-and-accessing-data-frames" class="section level1">
+<h1>Indexing and accessing data frames</h1>
 <p>Once you have a data frame object, you can access the elements in the data frame by either row, column, or both. Here are some examples</p>
-<pre class="r"><code>&gt; data$age       # get the age column
-&gt; data[c(&quot;age&quot;, &quot;weight&quot;)] # get the age and weight columns
-&gt; data[1:2,]     # get the first two rows
-&gt; data[1:3, 1:2] # get the first three rows and first three columns</code></pre>
+<pre class="r"><code>&gt; df$age       # get the age column
+&gt; df[c(&quot;age&quot;, &quot;weight&quot;)] # get the age and weight columns
+&gt; df[1:2,]     # get the first two rows
+&gt; df[1:3, 1:2] # get the first three rows and first three columns</code></pre>
 </div>
-<div id="reading-files-as-a-data-frame" class="section level2">
-<h2>Reading files as a data frame</h2>
-<p>Most functions for reading data from files, such as <code>read.csv</code> and <code>read.table</code> typically return the data they read as data frames.</p>
+<div id="reading-files-as-data-frames" class="section level1">
+<h1>Reading files as data frames</h1>
+<p>Most functions for reading data from files, such as <code>read.csv</code> and <code>read.table</code> typically return the data they read as data frames. We previously examined the <code>read.csv</code> function which parses “Comma Separated Value” format. The <code>read.delim</code> function does the same for tab or space delimited files.</p>
+<p>The files <code>turtles.txt</code> (available from <a href="https://github.com/Bio204-class/Bio204-Fall-2016/blob/master/datasets/turtles.txt">course GitHub website</a>) is a tab-delimited file with a set of measurements representing linear dimensions of the carapace (upper shell) of painted turtles (<em>Chrysemys picta</em>), as reported in Jolicoeur and Mosimmann, 1960; Growth 24: 339-354.</p>
+<p>Here’s how we can read this file directly from a URL (note that I created a shortened URL to make it easier to type:</p>
+<pre class="r"><code>&gt; turtles &lt;- read.delim(&quot;https://tinyurl.com/glznkfq&quot;)
+&gt; names(turtles)</code></pre>
+<p>Alternately, if you had placed the file in your working directory you could read it as follows:</p>
+<pre class="r"><code>&gt; turtles &lt;- read.delim(&quot;turtles.txt&quot;)</code></pre>
 </div>
+<div id="useful-functions-for-data-frames" class="section level1">
+<h1>Useful functions for data frames</h1>
+<p>Here’s a list of some useful functions for working with data frames</p>
+<ul>
+<li><code>dim</code> – gives the dimensions of the table the data frame represents</li>
+<li><code>nrow</code>, <code>ncol</code> – number of rows and columns respectively</li>
+<li><code>head</code> and <code>tail</code> – show first / last few elements of data frame</li>
+<li><code>summary</code> – provides simple statistical summaries of columns of data frame</li>
+<li><code>subset</code> – as discussed previously for vectors and lists</li>
+</ul>
+<pre class="r"><code>&gt; dim(turtles)
+&gt; head(turtles)
+&gt; tail(turtles)
+&gt; summary(turtles)
+&gt; # use subset to get only male turtles
+&gt; males &lt;- subset(turtles, sex == &quot;m&quot;)
+&gt; # subset on two criteria
+&gt; big.females &lt;- subset(turtles, sex == &quot;f&quot; &amp; length &gt; 125) </code></pre>
+</div>
+<div id="using-the-dplyr-library-to-manipulate-data-frames" class="section level1">
+<h1>Using the <code>dplyr</code> library to manipulate data frames</h1>
+<p>The <code>dplyr</code> pckage provides some powerful and convenient functions for working with data frames. If you haven’t yet installed the <code>dplyr</code> library, see the document <a href="https://bio204-class.github.io/Bio204-Fall-2016/installing-packages.html">Working with Packages in R</a>.</p>
+<pre class="r"><code>&gt; library(dplyr)  # load the package</code></pre>
+<p>The primary functions in the <code>dplyr</code> package can be thought of as a set of “verbs”, each verb corresponding to a common data manipulation task. Some of the most frequently used verbs/functions in <code>dplyr</code> include:</p>
+<ul>
+<li><code>select</code> – select columns</li>
+<li><code>filter</code> – filter rows</li>
+<li><code>arrange</code>– reorder rows</li>
+<li><code>mutate</code> – create new columns</li>
+<li><code>summarise</code> – summarize values</li>
+<li><code>group_by</code> – split data frame on some grouping variable. Can be powerfully combined with <code>summarise</code>.</li>
+</ul>
+<p>We illustrate these below by example using the small data frame we created earlier.</p>
+<div id="select" class="section level2">
+<h2><code>select</code></h2>
+<pre class="r"><code>&gt; select(df, sex, weight) </code></pre>
+</div>
+<div id="filter" class="section level2">
+<h2><code>filter</code></h2>
+<pre class="r"><code>&gt; filter(df, sex == &quot;M&quot;)
+&gt; filter(df, sex == &quot;F&quot;, weight &lt; 50)</code></pre>
+</div>
+<div id="arrange" class="section level2">
+<h2><code>arrange</code></h2>
+<pre class="r"><code>&gt; arrange(df, age)  # reorder rows by age
+&gt; arrange(df, sex, age) # reorder rows by sex and then age</code></pre>
+</div>
+<div id="mutate" class="section level2">
+<h2><code>mutate</code></h2>
+<pre class="r"><code>&gt; # create new DF same as input but with an additional column 
+&gt; # defined as sqrt of weight. Doesn't change original data frame 
+&gt; mutate(df, sqrt_wt = sqrt(weight)) </code></pre>
+</div>
+<div id="summarise" class="section level2">
+<h2><code>summarise</code></h2>
+<pre class="r"><code>&gt; summarise(df, avg_wt = mean(weight), avg_age = mean(age))</code></pre>
+</div>
+<div id="group_by" class="section level2">
+<h2><code>group_by</code></h2>
+<pre class="r"><code>&gt; by_sex &lt;- group_by(df, sex)
+&gt; summarise(by_sex, avg_wt = mean(weight), avg_age = mean(age))</code></pre>
+<p>When we use the <code>group_by</code> function, we get back a <code>tibble</code>, which you can think of as a light-weight data frame. If you want to cast it back to a data frame you can use the <code>as.data.frame</code> function as so:</p>
+<pre class="r"><code>&gt; by_sex &lt;- group_by(df, sex)
+&gt; summary_by_sex &lt;- summarise(by_sex, avg_wt = mean(weight), avg_age = mean(age))
+&gt; as.data.frame(summary_by_sex)</code></pre>
+</div>
+</div>
+<div id="chaining-dplyr-functions-using-pipes" class="section level1">
+<h1>Chaining dplyr functions using pipes</h1>
+<p>The <code>dplyr</code> library makes a very useful operator available called a pipe available to us (pipes actually come from another packaged called <code>magrittr</code>).</p>
+<p>Pipes are powerful because they allow us to chain together sets of operations in a very intuitive fashion while minimizing nested function calls. We can think of pipes as taking the output of one function and feeding it as the first argument to another function call, where we’ve already specified the subsequent arguments. The pipe operator is designated by <code>%&gt;%</code>.</p>
+<pre class="r"><code>&gt; df %&gt;% 
++   mutate(sqrt_wt = sqrt(weight)) %&gt;%
++   group_by(sex) %&gt;% 
++   summarise(avg_wt = mean(weight), 
++             mean_sqrt_wt = min(sqrt_wt),
++             min_age = min(age),
++             max_age = max(age)) %&gt;%
++   as.data.frame()</code></pre>
+<p>In the example above, we feed the data frame into the <code>mutate</code> function. <code>mutate</code> expects a data frame as a first argument, and subsequent arguments that specify the new variables to be created. <code>df %&gt;% mutate(sqrt_wt = sqrt(weight))</code> is thus equivalent to <code>mutate(df, sqrt_wt = sqrt(weight))</code>. We then pipe the output to <code>group_by</code>, grouping the data by sex, and finally we pass the data to <code>summarise</code>.</p>
 </div>
 
 

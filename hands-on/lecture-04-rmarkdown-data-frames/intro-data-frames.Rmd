@@ -1,0 +1,175 @@
+---
+title: "R Data Frames"
+author: "Paul M. Magwene"
+date: "September 5, 2016"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+    highlight: default  
+    fig_width: 5
+    fig_height: 3    
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = TRUE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="hide",
+                      message = FALSE)
+```
+
+# Introduction
+
+Along with vectors and lists, data frames are one of the core data structures
+when working in R.  A data frame is essentially a list which represents a data
+table, where each column in the table has the same number of rows. Also unlike standard lists, the objects (columns) in a data frame must have names.
+
+# Creating a data frame in the console
+
+```{r, eval=TRUE}
+age <- as.integer(rnorm(10, mean = 30, sd = 5))
+sex <- rep(c("M","F"), 5)
+wt <- rnorm(10, mean=50, sd = 8)
+df <- data.frame(age = age, sex=sex, weight=wt)
+df  # examine the data frame
+```
+
+# Indexing and accessing data frames
+
+Once you have a data frame object, you can access the elements in the data frame by either row, column, or both. Here are some examples
+
+```{r}
+df$age       # get the age column
+df[c("age", "weight")] # get the age and weight columns
+df[1:2,]     # get the first two rows
+df[1:3, 1:2] # get the first three rows and first three columns
+```
+
+
+# Reading files as data frames
+
+Most functions for reading data from files, such as `read.csv` and `read.table` typically return the data they read as data frames.  We previously examined the
+`read.csv` function which parses "Comma Separated Value" format.  The 
+`read.delim` function does the same for tab or space delimited files.
+
+The files `turtles.txt` (available from [course GitHub website](https://github.com/Bio204-class/Bio204-Fall-2016/blob/master/datasets/turtles.txt)) is a tab-delimited file  with a set of measurements representing linear dimensions of the carapace (upper  shell) of painted turtles (*Chrysemys picta*), as reported in Jolicoeur and  Mosimmann, 1960; Growth 24: 339-354. 
+
+Here's how we can read this file directly from a URL (note that I created a shortened URL to make it easier to type:
+
+```{r}
+turtles <- read.delim("https://tinyurl.com/glznkfq")
+names(turtles)
+```
+
+Alternately, if you had placed the file in your working directory you could
+read it as follows:
+
+```{r, eval=FALSE}
+turtles <- read.delim("turtles.txt")
+```
+
+# Useful functions for data frames
+
+Here's a list of some useful functions for working with data frames
+
+  * `dim` -- gives the dimensions of the table the data frame represents
+  * `nrow`, `ncol` -- number of rows and columns respectively
+  * `head` and `tail` -- show first / last few elements of data frame
+  * `summary` -- provides simple statistical summaries of columns of data frame
+  * `subset` -- as discussed previously for vectors and lists
+  
+```{r}
+dim(turtles)
+head(turtles)
+tail(turtles)
+summary(turtles)
+# use subset to get only male turtles
+males <- subset(turtles, sex == "m")
+# subset on two criteria
+big.females <- subset(turtles, sex == "f" & length > 125) 
+```
+
+# Using the `dplyr` library to manipulate data frames
+
+The `dplyr` pckage provides some powerful and convenient functions for working  with data frames. If you haven't yet installed the `dplyr` library, see the document 
+[Working with Packages in R](https://bio204-class.github.io/Bio204-Fall-2016/installing-packages.html).
+
+```{r}
+library(dplyr)  # load the package
+```
+
+The primary functions in the `dplyr` package can be thought of as a set of "verbs", each verb corresponding to a common data manipulation task.  Some of the most frequently used verbs/functions in `dplyr` include:
+  
+  * `select` -- select columns
+  * `filter` -- filter rows
+  * `arrange`-- reorder rows
+  * `mutate` -- create new columns
+  * `summarise` -- summarize values
+  * `group_by` -- split data frame on some grouping variable. Can be powerfully combined with `summarise`.
+
+We illustrate these below by example using the small data frame we created earlier.
+
+
+## `select`
+
+```{r}
+select(df, sex, weight) 
+```
+
+## `filter`
+```{r}
+filter(df, sex == "M")
+filter(df, sex == "F", weight < 50)
+```
+
+## `arrange`
+```{r}
+arrange(df, age)  # reorder rows by age
+arrange(df, sex, age) # reorder rows by sex and then age
+```
+
+## `mutate`
+```{r}
+# create new DF same as input but with an additional column 
+# defined as sqrt of weight. Doesn't change original data frame 
+mutate(df, sqrt_wt = sqrt(weight)) 
+```
+
+## `summarise`
+```{r}
+summarise(df, avg_wt = mean(weight), avg_age = mean(age))
+```
+
+## `group_by`
+```{r}
+by_sex <- group_by(df, sex)
+summarise(by_sex, avg_wt = mean(weight), avg_age = mean(age))
+```
+
+When we use the `group_by` function, we get back a `tibble`, which you can think of as a light-weight data frame.  If you want to cast it back to a data frame you can use the `as.data.frame` function as so:
+
+```{r}
+by_sex <- group_by(df, sex)
+summary_by_sex <- summarise(by_sex, avg_wt = mean(weight), avg_age = mean(age))
+as.data.frame(summary_by_sex)
+```
+
+
+# Chaining dplyr functions using pipes
+
+The `dplyr` library makes a very useful operator available called a pipe available to us (pipes actually come from another packaged called `magrittr`). 
+
+Pipes are powerful because they allow us to chain together sets of operations in a very intuitive fashion while minimizing nested function calls.  We can think of pipes as taking the output of one function and feeding it as the first argument to another function call, where we've already specified the subsequent arguments. The pipe operator is designated by `%>%`.  
+
+```{r}
+df %>% 
+  mutate(sqrt_wt = sqrt(weight)) %>%
+  group_by(sex) %>% 
+  summarise(avg_wt = mean(weight), 
+            mean_sqrt_wt = min(sqrt_wt),
+            min_age = min(age),
+            max_age = max(age)) %>%
+  as.data.frame()
+```
+
+In the example above, we feed the data frame into the `mutate` function. `mutate` expects a data frame as a first argument, and subsequent arguments that specify the new variables to be created.   `df %>% mutate(sqrt_wt = sqrt(weight))` is thus equivalent to `mutate(df, sqrt_wt = sqrt(weight))`.  We then pipe the output to `group_by`, grouping the data by sex, and finally we pass the data to `summarise`.  
