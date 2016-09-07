@@ -1,0 +1,161 @@
+---
+title: "Problem Set 01"
+author: "Paul M. Magwene"
+date: "September 7, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem 1 (3 pts)
+
+The `base` library is the set of standard functions that are always available in R.  Pick six functions from the `base` library that we have *not* discussed in class, write brief descriptions (in your own words) of what these functions do, and then provide brief code example illustrating their use (don't simply repeat the examples from the documentation!).
+
+### Function 1 description
+
+```{r}
+### Function 1 example
+```
+
+### Function 2 description
+
+```{r}
+### Function 2 example
+```
+
+### Function 3 description
+
+```{r}
+### Function 3 example
+```
+
+### Function 4 description
+
+```{r}
+### Function 4 example
+```
+
+### Function 5 description
+
+```{r}
+### Function 5 example
+```
+
+### Function 6 description
+
+```{r}
+### Function 6 example
+```
+
+
+# Problem 2
+
+Several years ago my lab published a paper describing the genetic dissection of biofilm formation in the budding yeast, Saccharomyces cerevisiae. 
+
+ * Granek JA, Murray D, Kayıkçı Ö, Magwene PM (2013) The genetic architecture of biofilm formation in a clinical isolate of *Saccharomyces cerevisiae*. Genetics 193(2): 587-600. http://dx.doi.org/10.1534/genetics.112.142067
+
+The data from this study available is available at the following link:
+
+  * https://github.com/Bio204-class/bio204-datasets/raw/master/seg_strain_table.csv
+
+An explanation of the various fields of the file is available at: 
+
+  * http://datadryad.org/bitstream/handle/10255/dryad.43938/README.pdf?sequence=2
+  
+## Problem 2.1: Reading files into Data Frames and exploring basic properties of a data set (2 pts)
+
+Use the appropriate function  to load the `seg_strain_table.csv` data file into a data frame object.
+
+```{r}
+# 2.1.a
+yeast = NULL # change NULL to code that will read the yeast data file and return a data frame
+```
+
+The yeast data set is a table with observations (samples) in the rows and variables in the columns. Below, write code to determine: b) the variable names; c) the types of each variable; d) the sample size (i.e. total number of observations).
+
+```{r}
+# 2.1.b variable names
+```
+
+```{r}
+# 2.1.c variable types
+```
+
+```{r}
+# 2.1.d total sample size
+```
+
+## Problem 2.2: Breaking down by categorical variables
+
+### 2.2.a (0.5 pt)
+
+The variable labeled "Pool" in the yeast data set designates the phenotype assignment that each individual in this study was given. There are two phenotypes, designated C = "Complex" and S = "Simple". Write code to calculate how many samples there are with each phenotype.
+
+```{r}
+# 2.2.a Number of samples assigned to each phenotype (Pool)
+```
+
+### 2.2.b (0.5 pt)
+
+The variable "Flo11.geno" gives the genotype that was observed at the FLO11 locus.  How many different genotypes  are there for this variable?  Give R code that shows how to calculate this.
+
+```{r}
+# 2.2.b
+```
+
+### 2.2.c (0.5 pt)
+
+For how many samples is there missing (`NA`) genotype information for FLO11? Show how to calculate this.
+
+```{r}
+# 2.2.c
+```
+
+### 2.2.d (1pt)
+
+The variable "Cyr1.geno" similarly gives genotypes at the CYR1 locus.  
+
+ * How many samples had the complex phenotype ("C" in `Pool`) and the complex allele at the CYR1 locus ("C" in `Cyr1.geno`)?
+
+ * How many samples had the complex phenotype ("C" in `Pool`) and the simple allele at the CYR1 locus ("S" in `Cyr1.geno`)?
+ 
+  * How many samples had the simple phenotype ("S" in `Pool`) and the complex allele at the CYR1 locus ("C" in `Cyr1.geno`)?
+
+```{r}
+# 2.2.d
+```
+
+
+## Problem 2.3: Descriptive statistics (2 pts)
+The `dplyr` packages provides useful tools for selecting on and summarizing parts of data frames. Use  functions defines in `dplyr' to generate a table that gives the  mean of each of the following variables -- cAMP, Cyr1.expr, Flo11.expr -- in the yeast data set.
+
+IMPORTANT HINT:  There are missing values (`NA`) in all three of these variables.  By default the `mean` function will return `NA` if there are missing data. Read the documentation for `mean` to figure out how to work around this.
+
+```{r}
+# 2.3 Descriptive statistics using dplyr
+```
+
+## Problem 2.4: Create Data Subsets (1 pt)
+In the code cell below show how you can extract subsets of the yeast data set for each phenotype class ("C" vs "S").  You will create two new data frames, where each new data holds the data for samples with a single phenotype.
+
+```{r}
+complex.samples = NULL # replace NULL with appropriate code
+simple.samples = NULL # replace NULL with appropriate code
+```
+
+## Problem 2.5: Adding a derived variable to the data frame (2 pts)
+The columns "Adhes.a", "Adhes.b", and "Adhes.c" represent three independent measures of the same variable (a measure of cellular adhesion or stickiness). Add a new column, "mean.adhes", to the data frame, that is the average of these three columns.
+
+```{r}
+# Problem 2.5 code
+```
+
+## Problem 2.6: Using group_by to examine conditional distributions (2 pt)
+
+The `dplyr` package provides the `group_by` function, which provides a convenient way to split a data set into groups based on some criteria. Show how you can use the `group_by` and `summarise` functions  to generate a table giving the minimum, maximum, and mean value of the `cAMP` variable, broken down by phenotype (`Pool`) and CYR1 genotype (`Cyr1.geno`). 
+
+```{r}
+# Problem 2.6 code
+```

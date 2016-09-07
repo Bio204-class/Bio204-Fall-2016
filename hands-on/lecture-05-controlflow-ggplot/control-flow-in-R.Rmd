@@ -1,0 +1,214 @@
+---
+title: "Control Flow Statements and Vectorization in R"
+author: "Paul M. Magwene"
+date: "September 7, 2016"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+    highlight: default  
+    fig_width: 5
+    fig_height: 3    
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="hide",
+                      message = FALSE)
+```
+
+# Control flow statements
+
+Control flow statements control the order of execution of different pieces of code. They can be used to do things like make sure code is only run when certain conditions are met, to iterate through data structures, to repeat something infinitely until some event happens, etc.
+
+## if and if-else statements
+
+`if` and `if-else` blocks allow you to structure the flow of execution so that certain instructions are executed only if particular conditions are met.
+
+Here's a simple `if` statement where we check whether a number, drawn from a random uniform distribution, is less than 0.5.
+
+```{r}
+x <- runif(1)  # random number for uniform distribution on (0,1)
+if (x < 0.5) {
+  print("heads")
+}
+```
+
+The example above, probably makes more sense if we include an `else` clause:
+
+```{r}
+x <- runif(1)
+if (x < 0.5) {
+  print("heads")
+} else {
+  print("tails")
+}
+```
+
+## for loops
+
+A `for` statement iterates over the elements of a sequence (an expression evaluating to a vector or list):
+
+```{r}
+mysum <- 0
+for (i in 1:20) {
+  mysum <- mysum + i
+}
+mysum
+```
+
+A `break` satement allows you to prematurely break out of a `for` loop:
+
+```{r}
+mysum <- 0
+x <- 1:20
+for (i in x) {
+  mysum <- mysum + i
+  if (mysum > 50) {
+    print("That's too much, buddy!")
+    break
+  }
+}
+mysum
+```
+
+A `next` satement allows you to halt the processing of the current iteration and immediately move to the next item of a `for` loop:
+
+```{r}
+mysum <- 0
+x <- 1:20
+for (i in x) {
+  if (i == 12) { # add value unless they equal 12
+    next
+  }
+  mysum <- mysum + i
+}
+mysum
+```
+
+## while statements
+
+A `while` statement iterates until the condition statement it contains is false.
+
+```{r}
+ct <- 0
+while (ct < 10) {
+  print(paste(ct, " is less than 10"))
+  ct <- ct + 2
+}
+```
+
+## repeat loops
+
+A `repeat` loop will loop indefinitely until we explicitly break out of the loop with a `break` statement.
+
+```{r}
+ct <- 0
+repeat {
+  print(paste(ct, " is the magic number"))
+  ct <- ct + 1
+  if (ct > 10) {
+    break
+  }
+}
+```
+
+# Vectorization
+
+For-loops are a common idiom in many programming languages.  However, because manipulating or working with sequences (vectors and lists) is such a common task in R, there are a number of "vectorized" functions that can take the place of a for loop and usually are more efficient in terms of CPU time or memory.
+
+## `ifelse`
+
+The `ifelse` function is equivalent to a `for`-loop with a nested `if-else` statement.  `ifelse` applies the specified test to each element of a vector, and returns different values depending on if the test is true or false.
+
+Here's an example of using `ifelse` to replace `NA` elements in a vector with zeros.
+
+```{r}
+x <- c(3, 1, 4, 5, 9, NA, 2, 6, 5, 4)
+newx <- ifelse(is.na(x), 0, x)
+newx
+```
+
+The equivalent for-loop could be written as:
+```{r}
+x <- c(3, 1, 4, 5, 9, NA, 2, 6, 5, 4)
+newx <- c()  # create an empty vector
+for (elem in x) {
+  if (is.na(elem)) {
+    newx <- c(newx, 0)  # append zero to newx
+  } else {
+    newx <- c(newx, elem)  # append elem to newx
+  }
+}
+newx
+```
+
+The `ifelse` function is clearly a more compact and readable way to accomplish this.
+
+ASIDE: The above for loop is relatively inefficient because `newx` needs to be recreated at every step for the for loop. We could make this more efficient by "pre-allocating" the vector `newx` by creating a vector filled with `NA` values:
+
+```{r}
+x <- c(3, 1, 4, 5, 9, NA, 2, 6, 5, 4)
+newx <- rep(NA, length(x))
+for (i in 1:length(x)) {
+  if (is.na(x[i])) {
+    newx[i] <- 0  
+  } else {
+    newx[i] <- x[i]  # append i to newx
+  }
+}
+newx
+```
+
+
+## `lapply` and `sapply`
+
+Another common case we find ourselves faced with is applying a function to every element of a list or vector.  Again, we could use a `for` loop, but the `lapply` ("list apply") or `sapply` ("sequence apply") functions are often a better alternatives.
+
+Imagine we have a list of 2-vectors, where each vector gives the min and max values of some variable of interest for individuals in a sample (e.g. resting heart rate and maximum heart rate during exercise).  We could use the `sapply` function to quickly generate the difference between the min and max values like so:
+
+```{r}
+heart.rates <- list(bob = c(60, 120), fred = c(79, 150), jim = c(66, 110))
+diff.fxn <- function(x) {x[2] - x[1]}
+lapply(heart.rates, diff.fxn)
+```
+
+`sapply` is similar to `lapply` but it will simplify the result to a vector or array as approrpaite
+
+```{r}
+sapply(heart.rates, diff.fxn)
+```
+
+When the function is short, as it is in the example above, it can be convenient to define the function "inline" as show here:
+
+```{r}
+sapply(heart.rates, function(x){x[2] - x[1]})
+```
+
+## `apply`
+
+The `apply` function is like `lapply` but will apply a given function to either the rows or columns of a data frame or matrix.  Imagine we had a heart rate data for three individuals in the form of a data frame.  First let's create this data frame.
+
+```{r}
+heart.rate.df <- data.frame(before.exercise = c(60, 79, 66),
+                            after.exercise = c(120, 150, 110),
+                            row.names = c("bob", "fred", "jim"))
+heart.rate.df
+```
+
+Take a moment to read the `apply` documentation
+```{r}
+help(apply)
+```
+
+To get the row (individuals) means for this data we could use `apply` as so:
+```{r}
+apply(heart.rate.df, 1, mean)
+```
+
+The equivalent column means  would be given by:
+```{r}
+apply(heart.rate.df, 2, mean)
+```
+
