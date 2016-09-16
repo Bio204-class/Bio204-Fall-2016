@@ -1,0 +1,68 @@
+---
+title: "In-class Exercises"
+author: "Paul M. Magwene"
+date: "September 16, 2016"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+    highlight: default  
+    fig_width: 5
+    fig_height: 3.25
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="hide",
+                      message = FALSE, cach = TRUE)
+```
+
+# Instructions
+
+Working in groups of 2-3 people, complete the exercises below.
+
+Some functions that might come in handy include: `summary`, `quantile`, `mean`, `median`, `sd`, `range`, various ggplot functions (see Lecture 6 hand out).
+
+# Problem 1: Trees
+
+The `trees` data sets includes measurements of the girth (diameter), height, and volume of black cherry trees.  Examine the trees data set and read the documentation (`?trees`) and then do the following exercises.
+
+A) Generate summary statistics (mean, median, standard deviation, first and third quartile, range) for the height variable in the trees data set.
+
+B) Generate box plots and histograms for the height variable.
+
+C) Are the mean and standard deviation "good" descriptors of the center and spread of the data on height? 
+
+
+# Problem 2: Old Faithful Data Set
+
+The `faithful` data set contains information on eruptions of the Old Faithful geyser in Yellow National Park.  There are two variables -- 1) waiting time between eruptions (`waiting`); and 2) duration of the eruption (`eruptions`).
+
+A) Generate summary statistics for the eruptions and waiting time variables.
+
+B) Generate boxplots, histograms, and density plots for the eruptions and waiting time variables.  On your historgrams draw red vertical lines at the mean (see `geom_vline` and the `xintercept` argument to that function)
+
+C) What term would you use to describes the distributions of the eruptions and waiting  time data?
+
+D) Are the mean and standard deviation "good" descriptors of the center and spread of the eruption and waiting time data? 
+
+E) What are the advantages and short comings of box plots vs histograms vs density plots for depicting the old faithful data?
+
+F) For Old Faithful eruptions where the waiting time was greater than 70 minutes, what was the average duration of the eruption?  What was the average duration of the eruptions where the waiting time was less than 70 mins?
+
+
+# Problem 3: Turtles
+
+The files `turtles.txt` (available from course GitHub website or at https://tinyurl.com/glznkfq) is a tab-delimited file with a set of measurements representing linear dimensions of the carapace (upper shell) of painted turtles (Chrysemys picta), as reported in Jolicoeur and Mosimmann, 1960; Growth 24: 339-354.  Both male and female turtles are included in the data set.
+
+A) Generate summary statistics for the turtle data set as a whole, and then for males only and females only.
+
+B) Generate boxplots and density plots contrasting the distributions of the shell measurements between the two sexes.
+
+C) Based on the the summary statistics and plots you generated what are you tentative conclusions about shell morphology of male vs female turtles?
+
+
+# Bonus Problem (3 pts)
+
+D)  The `cowplot` packages provides nice facilities for laying out individual plots as subplots in a larger grid.  Install the `cowplot` package and read the [cowplot vignettte](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html).  After reading the cowplot documentation, generate a publication quality figure that shows box plots for male vs female turtles for each of the three morphological variables.  Each pair of box plots should be a separate subfigure, layed out horizontally (i.e. a single row)  in the order: a) length, b) width, and c) height.  Don't forget to provide appropriate axis labels with units.  In your R markdown file provide an appropriate figure caption.
