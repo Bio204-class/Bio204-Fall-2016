@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE,
 
 Working in groups of 2-3 people, complete the exercises below.
 
-Some functions that might come in handy include: `summary`, `quantile`, `mean`, `median`, `sd`, `range`, various ggplot functions (see Lecture 6 hand out).
+Some functions that might come in handy include: `summary`, `quantile`, `mean`, `median`, `sd`, `range`, and various ggplot functions (see the Lecture 6 hand-out).
 
 # Problem 1: Trees
 
@@ -32,7 +32,7 @@ A) Generate summary statistics (mean, median, standard deviation, first and thir
 
 B) Generate box plots and histograms for the height variable.
 
-C) Are the mean and standard deviation "good" descriptors of the center and spread of the data on height? 
+C) Are the mean and standard deviation "good" descriptors of the center and spread of the data on height? Why or why not?
 
 
 # Problem 2: Old Faithful Data Set
@@ -45,11 +45,11 @@ B) Generate boxplots, histograms, and density plots for the eruptions and waitin
 
 C) What term would you use to describes the distributions of the eruptions and waiting  time data?
 
-D) Are the mean and standard deviation "good" descriptors of the center and spread of the eruption and waiting time data? 
+D) Are the mean and standard deviation "good" descriptors of the center and spread of the eruption and waiting time data? Why or why not?
 
 E) What are the advantages and short comings of box plots vs histograms vs density plots for depicting the old faithful data?
 
-F) For Old Faithful eruptions where the waiting time was greater than 70 minutes, what was the average duration of the eruption?  What was the average duration of the eruptions where the waiting time was less than 70 mins?
+F) For Old Faithful eruptions where the waiting time was greater than 70 minutes, what was the average duration of the eruption?  What was the average duration of the eruptions when the waiting time was less than 70 mins?
 
 
 # Problem 3: Turtles
@@ -60,9 +60,9 @@ A) Generate summary statistics for the turtle data set as a whole, and then for 
 
 B) Generate boxplots and density plots contrasting the distributions of the shell measurements between the two sexes.
 
-C) Based on the the summary statistics and plots you generated what are you tentative conclusions about shell morphology of male vs female turtles?
+C) Based on the the summary statistics and plots you generated, what biologically relevant statements might you make about the morphology of male vs female turtles?
 
 
 # Bonus Problem (3 pts)
 
-D)  The `cowplot` packages provides nice facilities for laying out individual plots as subplots in a larger grid.  Install the `cowplot` package and read the [cowplot vignettte](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html).  After reading the cowplot documentation, generate a publication quality figure that shows box plots for male vs female turtles for each of the three morphological variables.  Each pair of box plots should be a separate subfigure, layed out horizontally (i.e. a single row)  in the order: a) length, b) width, and c) height.  Don't forget to provide appropriate axis labels with units.  In your R markdown file provide an appropriate figure caption.
+D)  The `cowplot` packages provides nice facilities for laying out individual plots as subplots in a larger grid.  Install the `cowplot` package and read the [cowplot vignettte](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html).  After reading the cowplot documentation, generate a publication quality figure that shows box plots for male vs female turtles for each of the three morphological variables.  Each pair of box plots should be a separate subfigure, layed out horizontally (i.e. a single row)  in the order: A) length, B) width, and C) height.  Don't forget to provide appropriate axis labels with units.  In your R markdown file provide an appropriate figure caption.
