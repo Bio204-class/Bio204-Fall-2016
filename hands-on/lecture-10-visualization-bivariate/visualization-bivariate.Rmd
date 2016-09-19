@@ -80,7 +80,7 @@ setosa.length.vs.width + geom_point(alpha = 0.25, size = 2) + labels + clean.the
   xlim(3.5,6.5) + ylim(2,5)       # set limits for x- and y- axes
 ```
 
-# Marginal histograms and density plots with ggExtra
+## Marginal histograms and density plots with ggExtra
 
 The ggExtra package provides some useful additional functions for working with ggplot. We'll look at a function called `ggMarginal` that provides a convenient way to plot histograms or density plots on the margin of a scatter plot.  First you'll need to install `ggExtra` using the RStudio GUI or the command `install.packags("ggExtra")`.
 
@@ -121,10 +121,13 @@ As with many of the univariate visualizations we explored, it is often useful to
 ```{r}
 all.length.vs.width <- ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width))
 
+
 all.length.vs.width + 
-  geom_point(aes(color = Species), size = 2, alpha = 0.6) +
+  geom_point(aes(color = Species, shape = Species), size = 2, alpha = 0.6) +
   labels
 ```
+
+Notice how in our aesthetic mapping we specified that both color and shape should be used to represent the Species categories.
 
 The same thing can be accomplished with a 2D density plot.
 ```{r}
@@ -155,3 +158,101 @@ all.length.vs.width +
   theme(aspect.ratio = 1, legend.position = "none") + 
   labs(title = "Iris Sepal Morphology")
 ```
+
+# Measure of Association: Covariance and Correlation
+
+A bivariate scatter plot naturally prompts us to ask if there is some relationship between the variables being plotted.  The simplest type of relationships we consider in statistics are linear relationships.  Our standard measure of linear association are covariance and correlation.
+
+## Covariance
+
+Let $X = \left\{x_1, x_2,\ldots, x_n\right\}$ and $Y= \left\{y_1, y_2,\ldots, y_n\right\}$ represent two variables, each measured on the same set of $n$ observations (individuals) in our sample.
+
+The population covariance is defined as:
+\[
+\sigma_{XY} = \frac{1}{n}\sum_{i=1}^n(x_i - \bar{X})(y_i - \bar{Y})
+\]
+
+The unbiased sample covariance is defined as:
+\[
+s_{XY} = \frac{1}{n - 1}\sum_{i=1}^n(x_i - \bar{X})(y_i - \bar{Y})
+\]
+
+Covariance is a symmetric measure, i.e. cov(X,Y) = cov(Y,X). Covariances are positive when there is a positive relationship between $X$ and $Y$ (i.e. when $X$ increases, $Y$, on average, increases as well).  Covariance are negative when $X$ and $Y$ exhibit a negative relationship (i.e. an increase in $X$ tends to be associated with a decrease in $Y$).
+
+The units of covariance are the product of the units of $X$ and $Y$.  As was the case with variance, it can be hard to directly interpret covariances.  A more intuitive measure of association is correlation.
+
+### Calculating covariance in R
+
+The `cov` function in R will calculate the sample covariance between two vectors or vecotr-like objects:
+
+```{r, results="show"}
+cov(setosa$Sepal.Length, setosa$Sepal.Width)
+```
+
+If the first argument to `cov` is a data frame, the function will calculate covariances between all pairs of variables, return the result as a matrix.  For this to work, the variables must all be numeric.
+
+```{r, results = "show"}
+setosa.no.species <- select(setosa, -Species) # select all columns except Species
+cov(setosa.no.species)
+```
+
+The diagonal elements of the covariance matrix give the variances of each variable.  The off-diagonal elements give the corresponding covariances between each pair of variables.  Note that the covariance matrix is symmetrical about the diagonal.
+
+
+## Correlation
+
+The correlation between two variables, $X$ and $Y$, can be defined in terms of covariance and standard deviations.
+
+The population correlation is given by:
+\[
+\rho_{xy} = \frac{\sigma_{xy}}{\sigma_x\sigma_y}
+\]
+
+The unbiased sample correlation is given by:
+\[
+r_{xy} = \frac{s_{xy}}{s_x s_y}
+\]
+
+Correlation is a unitless statistic that can take on values between -1 and 1.  Correlations near zero indicate no evidence of linear association.  Correlations near 1 (-1) indicate strong positive(negative) lineaer association.
+
+### Correlation in R
+
+The `cor` function in R will calculate the sample covariance between two vectors or vecotr-like objects:
+
+```{r, results="show"}
+cor(setosa$Sepal.Length, setosa$Sepal.Width)
+```
+
+As with `cov`, the `cor` function can calculate a correlation matrix, giving all pairwise correlations between a set of variables:
+
+If the first argument to `cov` is a data frame, the function will calculate covariances between all pairs of variables, return the result as a matrix.  For this to work, the variables must all be numeric.
+
+```{r, results = "show"}
+cor(setosa.no.species)
+```
+
+In a correlation matrix, the diagonal elements are always 1 (every variable is perfectly correlated with itself).  Like covariance, correlation matrices are symmetric about the diagonal.
+
+## Pairs plots to depict multiple pairwise relationships
+
+A very useful visualization of multiple bivariate relationships is a "pairs plot" in which all pairwise relationships between variables of interest are displayed.  The package GGally includes a convenient implementation of the pairs plot. Install GGally (`install.packages("GGally")`) and then generate a pairs plot as shown below:
+
+```{r}
+library(GGally)
+ggpairs(setosa.no.species)
+```
+
+You can think of a pairs plot as similar to a correlation matrix.  By default the `ggpairs` function will display univariate density plots along the diagonal, depicting the univariate distributions of each individual variable.  The lower diagonal of the plot gives scatter plots, and the upper diagonal gives the corresponding correlations between each pair of variables.
+
+For more info on the GGally `ggpairs` function, see the [ggpairs vignettte](http://ggobi.github.io/ggally/ggpairs.html). 
+
+
+## Heat maps for representing pairwise relationships
+
+When the number of variables is large, a pairs plot can become unreadable.  An alternative is to create a "heat map" which depicts pairwise correlations in terms of colors.  Very large matrices can be depicted relatively efficiently this way.  The GGally package provides a function, `ggcorr` for creating such plots.
+
+```{r}
+ggcorr(setosa.no.species)
+```
+
+For more info on the GGally `ggcorr` function, see the [ggcorr vignettte](https://briatte.github.io/ggcorr/). 
