@@ -1,0 +1,303 @@
+---
+title: "Visualizing and Describing Bivariate Distributions"
+author: "Paul M. Magwene"
+date: "September 19, 2016"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+    highlight: default  
+    fig_width: 5
+    fig_height: 3.25
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="hide",
+                      message = FALSE, cach = TRUE)
+```
+
+# Introduction
+
+Having already explored various ways to visualize the distributions of single variables, we now turn our attention to bivariate and multivariate representations.  
+
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+# Example data set: Iris
+
+Initially we'll use just the I. setosa specimens from the Iris data set for our visualizations.
+
+```{r}
+setosa <- filter(iris, Species == "setosa")
+```
+
+
+# Scatter plots
+
+A scatter plot is one of the simplest representations of a bivariate distribution. 
+
+Scatter plots are simple to create in ggplot simply by specifying the appropriate X and Y variables in the aesthetic mapping and using `geom_point` for the geometric mapping.
+
+```{r}
+ggplot(setosa, aes(x = Sepal.Length, y = Sepal.Width)) + geom_point()
+```
+
+
+```{r, eval = FALSE}
+install.packages("ggplot2", dependencies=T)
+```
+
+Once the package is installed you can load the library as so:
+```{r}
+library(ggplot2)
+```
+
+# Geometric and aesthetic mappings in ggplot2
+
+ggplot2 considers two types of mappings from data to visual representations:  1) `geometry' or `geom' mappings which determine the type of geometric representation that a plot uses; and 2) `aesthetic mappings', which determine the way that data are represented in a plot (e.g. symbols, colors).  Both a geometric mapping and an aesthetic mapping are required to fully specify a plot.
+
+The primary plotting function in ggplot2 is `ggplot`. The first argument to `ggplot` is always a data frame. The data frame is the one that ggplot will use to look for all the mappings that you define in the subsequent pieces of the plot.  
+
+The second piece of information that we need to draw our plot is the `geom'. All geoms are encoded as R functions. The syntax used to add them to a plot is simply a `+' sign.  There are many different ggplot geoms for different plot types. We'll explore a few of the built-in geoms in this chapter; additional geoms will come up in later weeks.
+
+The third bit of information we need is the aesthethic mapping, specifying which variables map to which aspects of the plot.  Aesthetic mappings are created using the `aes` function.  Aesthetic mappings can be passed either as the second argument to `ggplot` function *or* as arguments to geom functions. When you specify the aesthetics as an argument to ggplot, than they are used as the default for subsequent geoms.  Altherative you can supply different aesthetics for every geom, if you want to combine representations. 
+
+We'll illustrate both of these approaches below.
+
+# Test data set: iris
+
+To illustrate ggplot we'll use a dataset called `iris` (included in the standard R distribution). This data set was made famous by R. A. Fisher who used it to illustrate many of the fundamental statistical methods he developed. The data set consists of four morphometric measurements for specimens from three different iris species. Use the R help to read about the iris data set (`?iris`). We'll be using this data set repeatedly in future weeks so familiarize yourself with it.
+
+# Univariate plots
+
+We'll start our exploration with common plot types for depicting a single continuous variable.  Plots like historams, boxplots, violin plots, and others are useful for exploring the distributional properties of individual variables. We'll also show how to combine a single continuous variable with a categorical variable so we can visually compare distributions across subgroups in our data. 
+
+# 1-D scatter
+
+One of the simplest visualizations of a single variable is simply to draw points along a number line, each point represent the value of one of the observations. This is sometimes called a "strip plot".
+
+We can accomplish this with the `geom_point` function as shown below for the Sepal Width variable in the iris data set.
+
+In this first plot we'll simply draw points along the x-axis, keeping the y-axis constant.
+```{r}
+ggplot(iris, aes(x = Sepal.Width)) + 
+  geom_point(aes(y = 0))
+```
+
+Note how we added the `geom_point` to the object created by `ggplot`.  In general we can think of geoms as layers we add to our plot.  Another way to generate that plot would be as so:
+```{r}
+p <- ggplot(iris, aes(x = Sepal.Width))
+pts <- geom_point(aes(y = 0))
+p + pts
+```
+
+In this second version we created the base plot with `ggplot` and assigned it to the variable `p`.  Then we created another variable called `pts` to which we assigned the `geom_point` data.  Then we combined the two to generate the plot.  This approach helps to make it clear what the various layers of our plot are accomplishing.
+
+## Jittering data
+
+There should have been  150 points plotted in the figure above, but visually it looks like only about 25 or 30 are shown.  What's going on?  If you examine the iris data, you'll see that the all the measures are rounded to the nearest tenth of a centimer, so that there are an unusually large number of specimens with identical values.  This is a limitation of the data set.  
+
+Numerically we will treat the data as they're provided, but visually we can slightly "jitter" the values (randomly move points a small amount in either  the vertical or horizontal direction) in order to provide a visual clue that there are multiple samples with the same value.  When presenting your data to someone else, should always note when you've used jittering so as not to misconvey the actual data.
+
+```{r}
+# having defined p above we don't need to redefine it
+jittered.pts <- geom_point(aes(y = 0),
+                           alpha = 0.25,
+                           position = position_jitter(width = 0.05,
+                                                      height = 0))
+p + jittered.pts
+```
+
+A number of new concepts were introduced above. First we added the argument `alpha` to the `geom_point` function. `alpha` controls the transparency of objects (0 being totally transparent, 1 being complete opaque).  We also specified a `position` argument using the `position_jitter` function.  Position jitter takes two arguments, `width` and `height` that specify the fractional amount to jitter points by.  Here we only jitter in the horizontal direction (width).  It turns out there's a built in jitter geom so an equivalent plot would be:
+
+```{r}
+p + geom_jitter(aes(y = 0), width=0.05, height=0, alpha=0.25)
+```
+
+## Adding categorical information
+
+Recall a key point about iris data set -- there are actually three different species represented in the data: Iris setosa, I. versicolor, and I. virginica.  Let's see how to generate a strip plot that also includes a breakdown by species.
+
+```{r}
+p + geom_jitter(aes(y = Species), 
+                width=0.05, 
+                height=0.1, 
+                alpha=0.5)
+```
+
+That was easy!  All we had to do was change the aesthetic mapping in `geom_jitter`, specifying Species as the y variable.  I also added a little vertical jitter as well to better separate the points.
+
+Now we have a much better sense of the data.  In particular it's clear that the *I. setosa* specimens generally have wider Sepals than samples from the other two species.
+
+Let's tweak this a little by also adding color information, to further emphasize the
+distinct groupings. We can do this by simply adding another argument to the aesthetic mapping in `geom_jitter`.
+```{r}
+p + geom_jitter(aes(y = Species, color=Species), 
+                width=0.05, 
+                height=0.1, 
+                alpha=0.5)
+```
+
+## Removing the legend
+
+In the previous plot, the legend information on the right is redundant with the species labels on the left.  We can remove a legend using the `theme` function.  We'll also tweak the x-axis label and add a title using the `labs` (labels) function.
+```{r}
+jittered.pts <- geom_jitter(aes(y = Species, color=Species), 
+                           width=0.05, height=0.1, alpha=0.5)
+
+p + jittered.pts + theme(legend.position = "none") + 
+  labs(x = "Sepal Width", title = "Sepal Width Distributions by Species")
+```
+
+
+# Histograms
+
+Histograms are another very common way to depict univariate data (perhaps the most common!).   In a histogram rather than showing individual observations, we divide the range of the data into a set of bins, and using vertical bars to depict the number (frequency) of points that fall into each bin.  This gives a good sense of the intervals in which most of the observations are found.
+
+Here's the simplest way to use `geom_histogram`. We can reuse the ggplot object, `p`, we created above because we're still depicting the same information (Sepal Width).
+```{r}
+p + geom_histogram(bins = 12)
+```
+
+As before, we probably want to break the data down by species.  Here we map Species to the fill color used for each bar, and we make the bars semi-transparent so we can see overlapping information.  We also specify `position = "identity"`, because the default when depicting multiple groups is to draw a "stacked histogram".
+```{r}
+p + geom_histogram(aes(fill = Species), position="identity",
+                   bins = 12, alpha=0.5) 
+```
+
+For comparison, here the stacked histogram:
+```{r}
+p + geom_histogram(aes(fill = Species),
+                   bins = 12, alpha=0.5) 
+```
+
+I don't like stacked histograms because they're easily misinterpretted.  For example, consider the largest interval in the figure above (centered at ~3).  You might be tempted to interpret this as saying there are roughly 36 I. virginica specimens with Sepal Width of about 3cm.  *This is incorrect*.  The correct interpretation for this bin is that there are ~36 observations *total*, of which 15 are from I. virgina, with 11 from I. versicolor, and 10 from I. setosa.  The first version of the histogram (with `position="identity"`) is the one most people would expect.
+
+
+# Density plots
+One shortcoming of histograms is that they are sensitive to the choice of bin margins and the number of bins (try regenerating some of the above histograms with more or less bins to see this).
+
+An alternative is a "density plot", which you can think of as a smoothed version of a histogram.  
+
+```{r}
+p + geom_density(aes(fill = Species), alpha=0.25)
+```
+
+Note that the vertical scale on a density plot is no longer counts (frequency) but something called "density".  In a density plot, the total area under the plot adds up to one. Intervals in a density plot therefore have a probabilistic intepretation that we'll discuss in more detail in a later lecture.
+
+Density plots still make some assumptions that affect the visualization, in particular a "smoothing bandwidth" (specified by the argument `bw`) which determines how course or granular the density estimation is.
+
+## Combining histograms and density plots
+
+Sometimes it's useful to combine histograms and density plots.  I usually only do this for one or two distributions, as otherwise the plot starts to become visually messy.  
+
+Here's an example applied to the *I. setosa data*.  Note that we have to change the vertical scale of the histogram to make it in units of density, so the two plots are comparable.  Also, I illustrate an alternate way to generate a density plot, using `geom_line`, and specifying the `stat` argument as "density".
+```{r}
+setosa = subset(iris, Species == "setosa")
+ggplot(setosa, aes(x = Sepal.Width)) + 
+  geom_histogram(bins=9, aes(y = ..density..), color = "black", fill = "white") +
+  geom_line(stat="density", color="red", size = 1.1) +
+  labs(title = "Sepal Width Distribution for I. setosa")
+```
+
+The plot includes some additional visual tweaks which should be self explanatory.
+
+# Boxplots
+
+Boxplots are another frequently used univariate visualization. Boxplots provide a very compact representation, and are most often used for comparing distributions between groups.
+
+A standard box plot depicts five useful features of a set of observations: the median (center most line), the first and third quartiles (top and bottom of the box).  The whiskers of a boxplot extend from the first/third quarter to the highest value that is within 1.5 * IQR, where IQR is the inter-quartile range (distance between the first and third quartiles).  Points outside of the whiskers are usually consider extremal points or outliers.  There are many variants on box plots, particularly with respect to the "whiskers". It's always a good idea to be explicit about what a box plot you've created shows. 
+```{r}
+p2 <- ggplot(iris, aes(x = Species, y = Sepal.Width))
+p2 + geom_boxplot(aes(color=Species))
+```
+
+Boxplots are most commonly drawn with the cateogorical variable on the x-axis.
+
+# Violin or Beanplot
+
+A violin plot (sometimes called a bean plot) is closely related to a density plot.  In fact you can think of a violin plot as a density plot rotated 90 degress and mirrored left/right.
+
+```{r}
+violin <- geom_violin(aes(color = Species, fill=Species), alpha = 0.25)
+p2 + violin
+```
+
+# Useful combination plots
+
+Boxplot or violin plots represent visual summaries/simplifications of  underlying data.  This is useful but sometimes key information is lost in the process of summarizing.  Combining these plots with strip (jitter) plots often provides useful visualization, particularly in the exploratory phase.  By doing so you get both the "birds eye view" as well as granular information.
+
+## Boxplot plus strip plot
+```{r}
+p2 + 
+  geom_boxplot(outlier.shape = NA) + 
+  geom_jitter(width=0.2, height=0.05, alpha=0.25, size=0.75)
+```
+Note that I suppressed the plotting of outliers in `geom_boxplot` so as not to draw the same points twice (the individual data are drawn by `geom_jitter`).
+
+## Violin plot plus strip plot
+```{r}
+p2 + 
+  geom_violin(aes(color=Species)) + 
+  geom_jitter(aes(color=Species),
+              width=0.15, height=0.05, alpha=0.25, size=0.75)
+```
+
+# Tweaking for presentation / publication quality
+
+Most of the above plots we generated are just fine for exploratory work.  However, when getting ready to include a plot in a thesis, paper, or presentation you should polish the figure for readability and interpretatability.  Such tweaking includes adding/changing axis labels and titles, make sure lines and text are sufficiently large for the intended format, etc.  Let's take our last example (violin plot + strip plot) and make some of these additional tweaks.
+
+
+```{r results="hold"}
+p <- ggplot(iris, aes(x = Species, y = Sepal.Width))
+g.violin <- geom_violin(aes(color=Species), alpha=0.5)  
+g.jitter <- geom_jitter(aes(color=Species),
+                            width=0.1, height=0.05, alpha=0.25, size=0.75)
+
+# set labels and title
+g.labels <- labs(x = "Species", y = "Sepal Width", 
+                     title = "Sepal Width Distributions for\nThree Iris Species")
+
+# customize x order and tick labels
+g.xticks <- scale_x_discrete(limits=c("setosa", "virginica", "versicolor"),
+                             labels=c("I. setosa", "I. virginica", "I. versicolor"))
+
+# Use the b/w theme to get rid of grey background, remove legend,
+# and tweak margins between axis titles around axis titles, and 
+# make x-axis text italic (appropriate for species names)
+g.theme <- theme_bw() + theme(legend.position = "none",
+                              axis.title.y = element_text(margin = margin(r=10)),
+                              axis.title.x = element_text(margin = margin(t=10)),
+                              axis.text.x = element_text(face = "italic")) 
+
+# create final plot
+final.plot <- p + g.violin + g.jitter + g.labels + g.xticks + g.theme
+
+# if you want to save the figure as a PDF, uncomment these lines
+#ggsave("Sepal-Width-Distn.pdf", final.plot, 
+#       width = 6, height = 5, units = "in")
+
+# now plot it
+final.plot
+```
+
+
+By default ggplot plots figures with a light gray background and white grid.  This can improve readability of figures on a computer screen but often isn't appropriate for printed figures or manuscript submissions.  To suppress the background we used the ggplot theme `theme_bw`. A useful tutorial on ggplot themes can be found here: http://www.hafro.is/~einarhj/education/ggplot2/themes.html
+
+# Changing fonts
+
+If you want to globally change fonts used for plots, there is a packaged called `extrafont` that will let you use TTF fonts. Install this library if you want to change the fonts (`install.packages("extrafont", dependencies = TRUE)`), and then make it available as shown below.  Note that this will only change the fonts used in PDF output.
+
+```{r}
+library(extrafont)
+font_import(pattern="[T/t]imes", prompt = FALSE) # load Times font
+```
+
+Once you've loaded the font you want, you can change the font defaults in ggplot using an argument to the `theme` function.
+```{r}
+final.plot + theme(text=element_text(family="Times"))
+```
