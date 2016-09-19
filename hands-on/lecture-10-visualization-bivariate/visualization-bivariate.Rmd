@@ -252,7 +252,9 @@ For more info on the GGally `ggpairs` function, see the [ggpairs vignettte](http
 When the number of variables is large, a pairs plot can become unreadable.  An alternative is to create a "heat map" which depicts pairwise correlations in terms of colors.  Very large matrices can be depicted relatively efficiently this way.  The GGally package provides a function, `ggcorr` for creating such plots.
 
 ```{r}
-ggcorr(setosa.no.species)
+ggcorr(setosa.no.species, 
+       size = 3,     # size argument changes text size along diagonal
+       label = TRUE) # label adds text giving correlations to cells
 ```
 
 For more info on the GGally `ggcorr` function, see the [ggcorr vignettte](https://briatte.github.io/ggcorr/). 
