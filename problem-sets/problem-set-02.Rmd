@@ -1,14 +1,16 @@
 ---
-title: "Problem Set 02"
-author: "Paul M. Magwene"
-output: html_document
+title: "Bio 204: Problem Set 02"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# DUE DATE: 28 September 2016
+# <font color = "red">Due Date: 28 September 2016</font>
 
 
 # Problem 1 (2 pts)
@@ -48,13 +50,15 @@ The file [possums.txt](https://github.com/Bio204-class/bio204-datasets/raw/maste
 
 ## Problem 2.1: Creating summary tables (3 pts)
 
-Use the `dplyr` functions `group_by` and `summarise`, and the built-in function `as.data.frame`, to generate the table below, which gives the mean values of each of the four morphological variables (`headL`, `skullW`, `totalL`, and `tailL`) in the two populations represented in the data.
+Use the `dplyr` functions `group_by` and `summarise`, and the built-in function `as.data.frame`, to generate the table below, which gives the mean values of each of the four morphological variables (`headL`, `skullW`, `totalL`, and `tailL`) grouped by population and sex.
 
 Your expected output should look like:
 ```
-    pop mean.headL mean.skullW mean.totalL mean.tailL
-1 other   92.60690    57.06552    86.78793   37.86207
-2   Vic   92.59783    56.65435    87.46739   35.93478
+    pop sex mean.headL mean.skullW mean.totalL mean.tailL
+1 other   f   91.81579    56.51579    87.36842   38.07895
+2 other   m   92.99231    57.33333    86.50513   37.75641
+3   Vic   f   92.41250    56.64583    88.33333   36.33333
+4   Vic   m   92.80000    56.66364    86.52273   35.50000
 ```
 
 ```{r}
@@ -66,6 +70,18 @@ Your expected output should look like:
 
 Using ggplot, recreate the boxplot given below that shows the tail length of possums, conditional on population and sex.
 
+Expected output:
+
+![Boxplot](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/possum-tail-length.png)
+
+
 ```{r}
 # Problem 2.2 code
 ```
+
+## Problem 2.3: Scatterplots (4 pts)
+
+Using ggplot and the `facet_grid` function, recreate the figure below that shows tail length vs total length, broken down by population and sex.
+
+![Scatter plot](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/possum-total-tail-scatter.png)
+
