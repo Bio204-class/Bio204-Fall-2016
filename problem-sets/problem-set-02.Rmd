@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Problem 1 (2 pts)
 
-Pick four functions from the ggplot library that we have not discussed in class, write brief descriptions (in your own words) of what these functions do, and then provide brief code example illustrating their use (don't simply repeat the examples from the documentation!).  Use any of the data set examples we have discussed in class in your code, or consider data sets from the [R Datasets Package](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/00Index.html) (the Datasets package is installed and loaded by default in a stock R setup).
+Pick four functions from the ggplot library that we have not discussed in class, write brief descriptions (in your own words) of what these functions do, and then provide brief code example illustrating their use (don't simply repeat the examples from the documentation!).  Use any of the data sets we have discussed in class in your examples code or consider data sets from the [R Datasets Package](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/00Index.html) (the Datasets package is installed and loaded by default in a stock R setup).
 
 ### Function 1 description
 
@@ -47,12 +47,15 @@ Pick four functions from the ggplot library that we have not discussed in class,
 
 The file [possums.txt](https://github.com/Bio204-class/bio204-datasets/raw/master/possum.txt) is a tab-delimited file that contains morphological measurements on 104 brushtail possums (*Trichosurus vulpecula*). This data set contains information on variables such as sex, age, head length, skull width, tail length, and total body length, as well as information about the population and locality (site) at which each specimen was collected.
 
+![Brushtail possums: Photo by Bryce McQuillan, CC-BY ](https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Trichosurus-vulpecula.jpg/320px-Trichosurus-vulpecula.jpg)
+
+
 
 ## Problem 2.1: Creating summary tables (3 pts)
 
 Use the `dplyr` functions `group_by` and `summarise`, and the built-in function `as.data.frame`, to generate the table below, which gives the mean values of each of the four morphological variables (`headL`, `skullW`, `totalL`, and `tailL`) grouped by population and sex.
 
-Your expected output should look like:
+Your output should look like this:
 ```
     pop sex mean.headL mean.skullW mean.totalL mean.tailL
 1 other   f   91.81579    56.51579    87.36842   38.07895
@@ -70,9 +73,8 @@ Your expected output should look like:
 
 Using ggplot, recreate the boxplot given below that shows the tail length of possums, conditional on population and sex.
 
-Expected output:
 
-![Boxplot](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/possum-tail-length.png)
+![Expected output for problem 2.2](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/possum-tail-length.png)
 
 
 ```{r}
@@ -83,7 +85,7 @@ Expected output:
 
 Using ggplot and the `facet_grid` function, recreate the figure below that gives scatter plots of tail length vs total length, conditional on sex and population.
 
-![Scatter plot](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/possum-total-tail-scatter.png)
+![Expected output for Problem 2.3](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/possum-total-tail-scatter.png)
 
 
 ## Problem 2.4: Body size as a function of age
@@ -93,16 +95,16 @@ Using ggplot and the `facet_grid` function, recreate the figure below that gives
 
 Generate a scatter plot showing body length (`totalL`) of possums as a function of age.  Since there are overlapping points use `geom_jitter` to jitter values 15% in the horizontal direction but *not* the vertical direction.  Your output figure should look like the one shown below (it won't be exactly the same because the exact jittering values are random).
 
-![Age trends](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/possum-growth.png)
+![Expected Output for Problem 2.4a](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/possum-growth.png)
 
 
 ### 2.4b: A prior hypotheses, trends, and interpretations (5 pts)
 
 1) If you had been asked to formulate an a priori hypothesis about how body length would relate to an animals age, what would you have expected? (1 pts)
 
-2) Describe any trends, or lack of trends, in the figure you generated.  Do those trends match your a priori expectations? (2 pts)
+2) Describe any trends, or lack of trends, in the figure you generated.  Is there correspondence to your a priori expectations? (2 pts)
 
-3) What (tentative) biological conclusions, if any, would you make based on this figure?  What other sort of information would be useful for asking questions about how body length changes with age in possums? (2 pts)
+3) What (tentative) biological conclusions, if any, would you make based on this figure?  What additional information would be useful for asking questions about how body size changes with age in possums? (2 pts)
 
 
 
