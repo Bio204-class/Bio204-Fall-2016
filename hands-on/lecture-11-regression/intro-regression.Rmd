@@ -1,0 +1,218 @@
+---
+title: "Introduction to Linear Regression"
+author: "Paul M. Magwene"
+date: "September 21, 2016"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+    highlight: default  
+    fig_width: 5
+    fig_height: 3.25
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="hide",
+                      message = FALSE, cach = TRUE)
+options(digits = 4)
+```
+
+# Linear least-squares regression -- finding a line of best fit
+
+Statistical models can be thought of as quantitative statements about how we think the variables under consideration are related to each other.   In most cases, we specify the general form of a model, and then estimate the specific parameters of the model from the data we've observed.
+
+Linear models are among the simplest statistical models.  In a linear model relatings two variables $X$ and $Y$, the general form of the model can be stated as "I assume that $Y$ can be expressed as a linear function of $X$".  The process of *model fitting* is then the task of finding the coefficients (parameters) of the linear model which best fit the observed data.
+
+Linear functions are those whose graphs are straight lines. A linear function of a variable $X$ is usually written as: 
+
+$$
+ f(X) = \hat{Y} = bX + a
+$$
+
+where $a$ and $b$ are constants.  In  geometric terms $b$ is the slope of the line and $a$ is the value of the function when $X$ is zero (usually the referred to as the "Y-intercept"). There are infinitely many such linear functions of $X$ we could define. Which linear function provides the best fit given our observed values of $X$ and $Y$?
+
+# Regression terminology
+
+- **Predictors, explanatory, or independent variable** -- the variables upon which we want to make our prediction.
+
+- **Outcomes, dependent, or response variable** -- the variable we are trying to predict/explain in our regression.
+
+# The optimality criterion for least-squares regression
+
+In order to fit a model to data, we have to specify some criterion for judging how well alternate models perform.  
+
+In linear regression, the optimality criterion can be expressed as"Find the linear function, $f(X)$, that minimizes the following quantity:"
+$$
+\sum (y_i - f(x_i))^2
+$$
+That is, our goal is to find the linear function of $X$ that minimizes the squared deviations in the $Y$ direction.
+
+![](./regression-minimization.png)
+
+# Solution for the least-squares criterion
+
+With a little calculus and linear algebra one can show that the values of $b$ (slope) and $a$ (intercept) that minimize the sum of squared deviations described above are:
+\begin{align}
+b &= \frac{s_{xy}}{s^2_x} = r_{xy}\frac{s_y}{s_x}\\
+\\
+a &= \overline{Y} - b\overline{X}
+\end{align}
+where $r_{xy}$ is the correlation coefficient between $X$ and $Y$, and $s_x$ and $s_y$ are the standard deviations of $X$ and $Y$ respectively.
+
+## Write your own bivariate regression function
+
+Above, I gave you  simple equations for calculating the slope and intercept for bivariate linear regression. Writing your own bivariate regression function below:
+
+```{r}
+bivariate.regression <- function(X, Y) {
+  # write your function here
+  # uncomment this line fill in the appropriate values
+  # return list(slope = ???, intercept = ???)
+}
+```
+
+
+# Illustrating linear regression with simulated data
+
+To illustrate how regression works, we'll use a simulated data set where we specify the relationship between to variables, $X$ and $Y$.  Using a simulation is desirable  because  it allows us to know what the "true" underlying model that relates $X$ and $Y$ is, so we can evaluate how well we do in terms of recovering the model.
+
+Let's generate two vectors representing the variable, $X$ and $Y$, where $Y$ is a function of $X$ plus some independent noise.  As specified below, the "true" model is $Y = 1.5X + 1.0 + \epsilon_y$ where $\epsilon_y$ is a noise term.
+
+```{r}
+library(ggplot2)
+library(ggExtra)
+
+set.seed(20160921)  # this seeds our random number generator
+                    # by setting a seed, you can make random number generation
+                    # reproducible
+
+npts <- 50
+X <- seq(1, 5, length.out = npts) + rnorm(npts)
+a <- 1.0
+b <- 1.5
+Y <- b*X + a + rnorm(npts, sd = 2)  # Y = 1.5X + 1.0 + noise
+
+df.xy <- data.frame(X = X, Y = Y)
+```
+
+Having generated some simulated data, let's visualize it.
+
+```{r}
+p <- ggplot(df.xy, aes(x = X, y = Y)) + geom_point()
+ggMarginal(p, type = "histogram", bins = 11)
+```
+
+
+
+# Specifying Regression Models in R
+
+R, of course, has a built-in function for fitting linear regression models. The function `lm` can be used not only to carry out bivariate linear regression but a wide range of linear models, including multiple regression, analysis of variance, analysis of covariance, and others.  
+
+```{r}
+fit.xy <- lm(Y ~ X, df.xy)
+```
+
+The first argument to `lm` is an R "formula", the second argument is a data frame.
+
+Formulas are R's way of specifying models, though they find other uses as well (e.g. we saw the formula syntax when we introduced the `facet_grid` function from ggplot). The general form of a formula in R is `response variable ~ explanatory variables`.  In the code example above, we have only a single explanatory variable, and thus our response variable is Y and our explanatory variable is X.  We'll see more advanced R formulas in later lectures, but for now just remember that the variable to the left of the tilde is the one you're trying to predict and the variable to the right is the explanatory variable.
+
+The `lm` function returns a list with a number of different components.  The ones of most interest to us are `fitted.values`, `coefficients`, `residuals`, and  (see the `lm` documentation for full details.)
+
+## Fitted values
+
+The component `fitted.values` gives the predicted values of $Y$ ($\hat{Y}$ in the equations above) for each observed value of $X$.  We can plot these predicted values of $Y$, as shown below:
+
+```{r}
+ggplot(df.xy, aes(x = X, y = Y)) + 
+  geom_point(alpha=0.7) +     # observed data
+  geom_point(aes(x = X, 
+                 y = fit.xy$fitted.values),   # predicted data
+             color='red', alpha=0.5)
+```
+
+## Getting the model coefficients
+
+The `coefficients` components gives the value of the model parameters, namely the intercept and slope.
+
+```{r, results = "show"}
+fit.xy$coefficients
+```
+
+As shown above, the estimated slope is `r fit.xy$coefficients[[2]]` and the estimated intercept is `r fit.xy$coefficients[[1]]`.  
+
+Recall that because this is a synthetic example, we know the "true" underlying model, which is $Y = 1.5X + 1.0 + \epsilon_x$. On the face of it, it appears our regression model is doing a decent job of estimating the true model.
+
+With this information in hand we can draw the regression line as so:
+
+```{r}
+ggplot(df.xy, aes(x = X, y = Y)) + 
+  geom_point(alpha=0.7) +     # observed data
+  geom_abline(slope = fit.xy$coefficients[[2]],
+              intercept = fit.xy$coefficients[[1]],
+              color='red', alpha=0.5)
+```
+
+Since linear model fitting is a fairly common task, the ggplot library includes a geometric mapping, `geom_smooth`, that will fit a linear model for us and generate the corresponding regression plot.
+
+```{r}
+ggplot(df.xy, aes(x = X, y = Y)) + 
+  geom_point(alpha = 0.75) + 
+  geom_smooth(method="lm", color = 'red')
+```
+
+By default, `geom_smooth` draws confidence intervals for the regression model (the shaded gray area around the regression line).  We'll explain what confidence intervals are when we get to the topic of statistical inference.
+
+# Residuals
+
+Residuals are the difference between the observed values of $Y$ and the predicted values.  You can think of residuals as the proportion of $Y$ unaccounted for by the model. 
+
+$$
+\mbox{residuals} = Y - \hat{Y}
+$$
+
+We can draw the residuals from our model like so:
+
+```{r}
+ggplot(df.xy, aes(x = X)) +
+  geom_point(aes(y = fit.xy$residuals)) + 
+  geom_hline(yintercept = 0, color = 'red', linetype = "dashed") + 
+  labs(x = "X", y = "Residuals")
+```
+
+When the linear regression model is appropriate, residuals should should centered around zero and shoud show no strong trends or extreme differences in spread for different values of $X$. 
+
+# Regression as sum-of-squares decomposition
+
+Regression can be viewed as a decomposition of the sum-of-squared deviations..
+
+$$
+ss(Y) = ss(\hat{Y}) + ss(\mbox{residuals})
+$$
+Let's check this for our example:
+
+```{r, results = "show"}
+ss.Y <- sum((Y - mean(Y))^2)
+ss.Yhat <- sum((fit.xy$fitted.values - mean(Y))^2)
+ss.residuals <- sum(fit.xy$residuals^2)
+ss.Y
+ss.Yhat + ss.residuals
+```
+
+# Variance "explained" by a regression model
+
+We can use the sum-of-square decomposition to understand the relative proportion of variance "explained" (accounted for) by the regression model.
+
+We call this quantity the "Coefficient of Determination",  designated $R^2$.  
+$$
+R^2 = \left( 1 - \frac{SS_{residuals}}{SS_{total}} \right)
+$$
+
+For this particular example we can estimate $R^2$ as follows:
+```{r, results = "show"}
+R2 <- 1.0 - (ss.residuals/ss.Y)
+R2
+```
+
+In this particular example, we find our linear model accounts for about 63% of the variance in $Y$.
