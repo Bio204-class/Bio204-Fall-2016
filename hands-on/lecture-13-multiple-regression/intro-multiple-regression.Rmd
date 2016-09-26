@@ -1,0 +1,62 @@
+---
+title: "Introduction to Multiple Regression"
+author: "Paul M. Magwene"
+date: "September 26, 2016"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+    highlight: default  
+    fig_width: 5
+    fig_height: 3.25
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="hide",
+                      message = FALSE, cach = TRUE)
+options(digits = 4)
+```
+
+## Review of bivariate regression
+
+Recall the model for bivariate least-squares regression.
+
+When we regress $Y$ and $X$ we're looking for a linear function, $f(X)$, for which the following sum-of-squared deviations is minimized:
+
+$$
+\sum_{i=1}^n (y_i - f(x_i))^2
+$$
+
+The general form a linear function of one variable is a line, 
+
+$$
+f(x) = a + bX
+$$
+
+where $b$ is the slope of the line and $a$ is the intercept.
+
+
+## Multiple regression is conceptually similar to bivariate regression
+
+The idea behind multiple regression is almost exactly the same as bivariate regression, except now we try and fit a linear model for $Y$ using multiple explanatory variables, $X_1, X_2,\ldots, X_m$. That is we're looking for a linear function, $f(X_1, X_2,\ldots,X_m)$ that minimizes:
+
+$$
+\sum_{i=1}^n(y_i - f(x_1, x_2,\ldots, x_m))^2
+$$
+
+A linear function of more than one variable is written as:
+
+$$
+f(X_1, X_2,\ldots,X_m) = a + b_1X_1 + b_2X_2 + \cdots + b_mX_m
+$$
+
+The values, $b_1, b_2,\ldots,b_m$ are the **regression coefficients**.  Geometrically they have the same interpretation as in the bivariate case -- slopes with respect to the corresponding variable.
+
+### Solving the multiple regression problem
+
+Mathematically, we simultaneously find the best fitting regression coefficients, $b_1, b_2,\ldots,b_m$, using linear algebra.  However, since we haven't covered linear algebra in this course, I will omit the details.
+
+### Lines, planes, and hyperplanes
+A linear function of one variable is a line, a linear function of two variables is a plane, and a linear function of more than two variables is generally called a *hyperplane*.  
