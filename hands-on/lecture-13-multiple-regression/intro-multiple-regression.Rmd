@@ -9,17 +9,17 @@ output:
     theme: readable
     highlight: default  
     fig_width: 5
-    fig_height: 3.25
+    fig_height: 5
 ---
   
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
                       comment=NA, warning = FALSE, results="hide",
-                      message = FALSE, cach = TRUE)
+                      message = FALSE, cach = TRUE, rgl.newwindow = TRUE)
 options(digits = 4)
 ```
 
-## Review of bivariate regression
+# Review of bivariate regression
 
 Recall the model for bivariate least-squares regression.
 
@@ -38,7 +38,7 @@ $$
 where $b$ is the slope of the line and $a$ is the intercept.
 
 
-## Multiple regression is conceptually similar to bivariate regression
+# Multiple regression is conceptually similar to bivariate regression
 
 The idea behind multiple regression is almost exactly the same as bivariate regression, except now we try and fit a linear model for $Y$ using multiple explanatory variables, $X_1, X_2,\ldots, X_m$. That is we're looking for a linear function, $f(X_1, X_2,\ldots,X_m)$ that minimizes:
 
@@ -52,11 +52,163 @@ $$
 f(X_1, X_2,\ldots,X_m) = a + b_1X_1 + b_2X_2 + \cdots + b_mX_m
 $$
 
-The values, $b_1, b_2,\ldots,b_m$ are the **regression coefficients**.  Geometrically they have the same interpretation as in the bivariate case -- slopes with respect to the corresponding variable.
+Where $a$ is the intercept and $b_1, b_2,\ldots,b_m$ are the **regression coefficients**. Geometrically the regression coefficients have the same interpretation as in the bivariate case -- slopes with respect to the corresponding variable.
 
-### Solving the multiple regression problem
+# Solving the multiple regression problem
 
 Mathematically, we simultaneously find the best fitting regression coefficients, $b_1, b_2,\ldots,b_m$, using linear algebra.  However, since we haven't covered linear algebra in this course, I will omit the details.
 
+# Interpretting Multiple Regression
+
+Here are some things to keep in mind when interpretting a multple regression:
+
+* Comparing the size of regression coefficients only makes sense if all the predictor (explanatory) variables have the same scale
+
+* If the explanatory variables ($X_1, X_2,\ldots,X_m$) are highly correlated, then the regression solution is "unstable" -- a small change in the data could lead to a very large change in the regression model.
+
+# Synthetic data 
+
+As we've done previously, let's generate some synthetic data where we "know" (specify) the underlying relationships among the variables so that we can see how close to the "truth" we get when we fit the linear model.   Here, Y is a function of two variables, W and X.
+
+```{r}
+set.seed(20160927)  # seed the RNG
+
+W <- rnorm(50, mean = 1, sd = 2)
+X <- rnorm(50, mean = 3, sd = 1)
+Y <- 2*W + 5*X + rnorm(50, sd = 2)
+```
+
+# 3D plots and RColorBrewer color schemes
+
+ggplot has no built in facilities for 3D scatter plots so we'll use a package called  [`plot3D`](http://www.rforscience.com/rpackages/visualisation/plot3d/). Install `plot3D` via the command line or using the Packages tab in the RStudio GUI.
+
+```{r, results = "hold"}
+library(plot3D)
+scatter3D(W, X, Y,
+          xlab = "W", ylab = "X", zlab = "Y",
+  # "pch" is short for "plot character", it sets the symbol type to plot, which 
+  # in this case a solid circle. For a list of possible characters and their 
+  # codes see the help (?pch)
+          pch = 16)
+
+```
+
+The plot3D package uses the a rainbow color scheme by default. This color scheme should generally be avoided. 
+
+Install the `RColorBrewer` package for easy access to more appropriate color schemes (`install.packages("RColorBrewer")`). RColorBrewer defines a set of color palettes that have been optimized for color discrimination, to be color blind friendly, etc. Once you've installed the RColorBrewer package you can see the available color palettes as so:
+
+```{r}
+library(RColorBrewer)
+# show representations of the palettes
+par(cex = 0.5) # reduce size of text in the follow plot
+display.brewer.all()  
+```
+
+Having loaded the RColorBrewer package we can pass a color palette to the `scatter3D` function, using `brewer.pal` (see `?brewer.pal`).  Here we use a gradient of blues.
+
+```{r}
+scatter3D(W, X, Y,
+          xlab = "W", ylab = "X", zlab = "Y",
+          pch = 16,
+          col = brewer.pal(7, "Blues"),
+          theta = 20, phi = 20 # theta and phi setting viewing angle
+          )
+```
+
+Of course, if you just want a uniform color, that's possible too. Simply specify a single color in the `col` argument.  Here we also add vertical lines to the plot using the `type` argument.
+
+```{r}
+scatter3D(W, X, Y,
+          xlab = "W", ylab = "X", zlab = "Y",
+          col = "black", alpha = 0.75, pch = 16,
+          theta = 20, phi = 20,
+          bty = "g",
+          type = "h")
+```
+
+For more examples of how you can modify plots generated with the  `plot3D` package see [this web page](http://www.sthda.com/english/wiki/impressive-package-for-3d-and-4d-graph-r-software-and-data-visualization).
+
+
 ### Lines, planes, and hyperplanes
 A linear function of one variable is a line, a linear function of two variables is a plane, and a linear function of more than two variables is generally called a *hyperplane*.  
+
+# Fitting a multiple regression model in R
+
+Using the `lm` function, fitting multiple regression models is a straightforward extension of fitting a bivariate regression model.
+
+```{r, results = "markup"}
+df.WXY <- data.frame(W = W, X = X, Y = Y)
+fit.YonWX <- lm(Y ~ W + X, df.WXY)
+summary(fit.YonWX)
+```
+
+# Visualizing the regression plane
+
+For multiple regression on two predictor variables we can visualize the plane of best fit but adding it as a surface to our 3D plot.
+
+```{r}
+# Create a regular grid over the range of W and X values
+grid.lines = 35
+W.grid <- seq(min(W), max(W), length.out = grid.lines)
+X.grid <- seq(min(X), max(X), length.out = grid.lines)
+WX.grid <- expand.grid( x = W.grid, y = X.grid)
+
+df.WX.grid <- data.frame(W = WX.grid[,1], X = WX.grid[,2])
+
+# Predicted Y at each point in grid
+Y.grid <- matrix(predict(fit.YonWX, newdata = df.WX.grid), 
+                 nrow = grid.lines, ncol = grid.lines)
+
+# Predicted Y at observed 
+Y.predicted <- predict(fit.YonWX)
+
+# scatter plot with regression plane
+scatter3D(W, X, Y, 
+    pch = 16, theta = 20, phi = 20, 
+    col = "red", alpha=0.9,
+    ticktype = "detailed",
+    xlab = "W", ylab = "X", zlab = "Y",  
+    surf = list(x = W.grid,
+                y = X.grid, 
+                z = Y.grid, 
+                facets = NA, 
+                fit = Y.predicted,
+                col = "black", alpha = 0.5)
+    )
+```
+
+
+# Interactive 3D Visualizations Using OpenGL
+
+The package `rgl` is another package that we can use for 3D visualization. `rgl` is powerful because it lets us create interactive plots we can rotate and zoom in/out on. 
+
+On OS X, rgl requires you to install a program called XQuartz. XQuartz can be downloaded from the [XQuartz Home Page](https://www.xquartz.org). If you're on a Mac, install XQuartz before installing `rgl`.
+
+Once you've installed `rgl` try the following code:
+
+```{r, webgl=TRUE, results = "asis"}
+library(rgl)
+
+# create 3D scatter, using spheres to draw points
+plot3d(W, X, Y, 
+       type = "s", 
+       size = 1.5,
+       col = "red")
+rglwidget() # only need to include this line if using in a markdown document
+```
+
+We can add a 3d plane to our plot, representing the multiple regression model, with the `rgl.planes` function as show below.
+
+```{r, webgl=TRUE, results = "asis"}
+coefs <- coef(fit.YonWX)
+b1 <- coefs["W"]
+b2 <- coefs["X"]
+c <- -1
+a <- coefs["(Intercept)"]
+rgl.planes(b1, b2, c, a, alpha = 0.9, color = "gray")
+rglwidget()
+```
+
+
+
+

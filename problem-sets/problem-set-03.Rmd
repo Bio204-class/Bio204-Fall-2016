@@ -1,0 +1,168 @@
+---
+title: "Bio 204: Problem Set 03"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# <font color = "red">Due Date: 07 October 2016</font>
+
+# The `trees` data set
+
+The built-in `trees` data set consists of measurements of the girth, height, and volume of 31 black cherry trees.  Read the documentation for `trees` before proceeding to answer the questions below.
+
+# Problem 1
+
+## Problem 1.1: Summary stats (2 pts)
+
+Using the `dplyr` functions `summarize_all` and `funs`, generate a summary table giving the mean and standard deviation, for each of the variables in `trees`.  Your output should look like this:
+
+```
+  Girth_mean Height_mean Volume_mean Girth_sd Height_sd Volume_sd
+1   13.24839          76    30.17097 3.138139  6.371813  16.43785
+```
+
+```{r}
+# Problem 1.1 code
+```
+
+
+## Problem 1.2: Univariate distributions
+
+Generate histograms for each of the variables in `trees`.
+
+![Expected output for problem 1.2](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/trees-univariatedistns.png)
+
+
+```{r}
+# Problem 1.2 code
+```
+
+## Problem 1.3: Measures of association
+
+Calculate a correlation matrix for the variables in `trees`. Your output should look like this:
+
+```
+           Girth    Height    Volume
+Girth  1.0000000 0.5192801 0.9671194
+Height 0.5192801 1.0000000 0.5982497
+Volume 0.9671194 0.5982497 1.0000000
+```
+
+```{r}
+# Problem 1.3 code
+```
+
+
+# Problem 1.4: Pairs plot
+
+Using the `GGally` package, generate a "pairs plot" depicting the pairwise relationships in the data, like the one below.
+
+![Expected output for problem 1.4](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/trees-pairplot.png)
+
+
+```{r}
+# Problem 1.4 code
+```
+
+
+# Problem 2
+
+Let’s assume we’re lumberjacks, but our permit only allows us to harvest a fixed number of trees. We get paid by the total volume of wood we harvest, so we’re interested in predicting a tree’s volume (hard to measure directly) as a function of its girth and height (relatively easy to measure), so we can pick the best trees to harvest.
+
+## Problem 2.1a
+
+Generate a linear regression model you could use to predict Volume as a function of Girth. What is the  equation for the linear model estimated by the regression?
+
+```{r}
+# Problem 2.1a code
+```
+
+
+## Problem 2.1b
+
+Generate a regression plot for Volume as a function of Girth.
+
+![Expected output for problem 2.1b](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/trees-GirthVolume.png)
+
+```{r}
+# Problem 2.1b code
+```
+
+
+## Problem 2.2a
+
+Generate a linear regression model you could use to predict  Volume as a function of Height. What is the  equation for the linear model estimated by the regression?
+
+```{r}
+# Problem 2.2a code
+```
+
+
+## Problem 2.2b
+
+Generate a regression plot for Volume as a function of Height.
+
+![Expected output for problem 2.2b](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/trees-HeightVolume.png)
+
+```{r}
+# Problem 2.2b code
+```
+
+
+## Problem 2.3a
+
+Generate a linear regression model you could use to predict Volume as a function of Grith *and* Height. What is the  equation for the linear model estimated by the regression?
+
+```{r}
+# Problem 2.3a code
+```
+
+
+## Problem 2.3b
+
+Using the `plot3D` package, generate a 3D regression plot for Volume as a function of Girth and Height.
+
+```{r}
+# Problem 2.3b code
+```
+
+
+# Problem 3
+
+Let’s think about the relationships we’re actually modeling for a few minutes. For the sake of simplicity let’s consider the trunk of a tree to be a cylinder. How do the dimensions of this cylinder relate to its volume? You can look up the formula for the volume of a cylinder, but the key thing you’ll want to note is that volume of the cylinder should be proportional to a characteristic length of the cylinder cubed ($V \propto L^3$). This suggests that if we want to fit a linear model we should relate Girth to $\sqrt[3]{\mbox{Volume}}$. 
+
+## Problem 3a
+
+Using the `dplyr` function `mutate`, add a derived variable for the cube root of volume,  $\sqrt[3]{\mbox{Volume}}$ to the `trees` data frame.
+
+```{r}
+# Problem 3a code
+```
+
+
+## Problem 3b
+
+Fit a regression model to predict  $\sqrt[3]{\mbox{Volume}}$ from Girth.
+
+```{r}
+# Problem 3b code
+```
+
+
+## Problem 3c
+
+Generate side by side *residual plots* showing: a) Volume as a function of Girth and b) $\sqrt[3]{\mbox{Volume}}$ as a function of Girth.
+
+```{r}
+# Problem 3c code
+```
+
+## Problem 3d
+
+Interpret the residual plots you generated in Problem 3c, in terms of what they tell you aboutmodel fit.
