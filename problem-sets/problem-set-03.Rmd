@@ -154,11 +154,13 @@ Fit a regression model to predict  $\sqrt[3]{\mbox{Volume}}$ from Girth. What is
 
 Using the `ggplot` and `cowplot` libraries, generate side by side *residual plots* showing: a) Volume as a function of Girth and b) $\sqrt[3]{\mbox{Volume}}$ as a function of Girth.
 
+![Expected output for problem 3c](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/trees-residual-plots.png)
+
+
 ```{r}
 # Problem 3c code
 ```
 
-![Expected output for problem 3cc](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/trees-residual-plots.png)
 
 ## Extra credit: Problem 3d (2 pts)
 
