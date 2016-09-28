@@ -32,9 +32,9 @@ Using the `dplyr` functions `summarize_all` and `funs`, generate a summary table
 ```
 
 
-## Problem 1.2: Univariate distributions
+## Problem 1.2: Univariate distributions (3 pts)
 
-Generate histograms for each of the variables in `trees`.
+Using the `ggplot2` and `cowplot` libraries, generate histograms for each of the variables in `trees`, formatted as shown below:
 
 ![Expected output for problem 1.2](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/trees-univariatedistns.png)
 
@@ -43,7 +43,7 @@ Generate histograms for each of the variables in `trees`.
 # Problem 1.2 code
 ```
 
-## Problem 1.3: Measures of association
+## Problem 1.3: Measures of association (1 pt)
 
 Calculate a correlation matrix for the variables in `trees`. Your output should look like this:
 
@@ -59,7 +59,7 @@ Volume 0.9671194 0.5982497 1.0000000
 ```
 
 
-# Problem 1.4: Pairs plot
+# Problem 1.4: Pairs plot (1 pt)
 
 Using the `GGally` package, generate a "pairs plot" depicting the pairwise relationships in the data, like the one below.
 
@@ -73,7 +73,7 @@ Using the `GGally` package, generate a "pairs plot" depicting the pairwise relat
 
 # Problem 2
 
-Let’s assume we’re lumberjacks, but our permit only allows us to harvest a fixed number of trees. We get paid by the total volume of wood we harvest, so we’re interested in predicting a tree’s volume (hard to measure directly) as a function of its girth and height (relatively easy to measure), so we can pick the best trees to harvest.
+Let’s imagine we’re lumberjacks, but our permit only allows us to harvest a fixed number of trees. We get paid by the total volume of wood we harvest, so we’re interested in predicting a tree’s volume (hard to measure directly) as a function of its girth and height (relatively easy to measure), so we can pick the best trees to harvest.
 
 ## Problem 2.1a
 
@@ -117,7 +117,7 @@ Generate a regression plot for Volume as a function of Height.
 
 ## Problem 2.3a
 
-Generate a linear regression model you could use to predict Volume as a function of Grith *and* Height. What is the  equation for the linear model estimated by the regression?
+Generate a linear regression model you could use to predict Volume as a function of Grith **and** Height. What is the  equation for the linear model estimated by the regression?
 
 ```{r}
 # Problem 2.3a code
@@ -126,10 +126,23 @@ Generate a linear regression model you could use to predict Volume as a function
 
 ## Problem 2.3b
 
-Using the `plot3D` package, generate a 3D regression plot for Volume as a function of Girth and Height.
+Using the `plot3D` package, a scatter plot depicting all three variables as shown below.
+
+![Expected output for problem 2.3b](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/trees-3Dplot.png)
 
 ```{r}
 # Problem 2.3b code
+```
+
+
+## Problem 2.3c
+
+An alternate way you might depict this 3D data set is using a bivariate scatter plot, where the third variable (Volume) is depicted using the size of the points.  Use `ggplot` to generate the figure below.
+
+![Expected output for problem 2.3c](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/problem-sets/trees-GirthHeightVolume-scatter.png)
+
+```{r}
+# Problem 2.3c code
 ```
 
 
