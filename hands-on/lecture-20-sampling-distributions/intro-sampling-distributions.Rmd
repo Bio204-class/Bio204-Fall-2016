@@ -1,0 +1,273 @@
+---
+title: "Introduction to Sampling Distributions"
+author: "Paul M. Magwene"
+date: "October 17, 2016"
+output:
+  html_document:
+    fig_height: 3
+    fig_width: 5
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: '2'
+  html_notebook:
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: 2
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="markup",
+                      message = FALSE, cache = FALSE)
+options(digits = 4)
+```
+
+
+
+# Population distribution
+
+Here is a population of size 100,000.
+
+```{r}
+set.seed(20161017)
+
+mu <- 64
+sigma <- 8
+n <- 100000
+popn <- rnorm(n, mean = mu, sd = sigma)
+true.mu <- mean(popn)
+true.sigma <- sd(popn)
+```
+
+For the population of interest, the true mean is `r true.mu` and the true standard deviation is `r true.sigma`.
+
+This is what the population distribution looks like when represented as a frequency histogram.
+
+```{r}
+library(ggplot2)
+qplot(popn, geom = "histogram")
+```
+
+# Sample distribution
+
+Here is sample of size 60 drawn without replacement from this population:
+
+```{r}
+s60 <- sample(popn, 60)
+```
+
+For the population of interest, the point estimates of the mean and standard deviation are `r mean(s60)` and `r sd(s60)` respectively.
+
+Here is what the frequency histogram of the sample looks like.
+
+```{r}
+qplot(s60, geom = "histogram", fill = I("steelblue"), bins=15)
+```
+
+## Comparing a Sample to the Population Distribution
+
+Here's density histograms of the population (gray) and the sample (blue) drawn together.
+
+```{r}
+qplot(popn, y = ..density.., geom = "histogram") +
+  geom_histogram(aes(x = s60, y = ..density..), 
+                 alpha = 0.65, fill = "steelblue")
+```
+
+
+# Sampling distribution of the mean
+
+To estimate the sampling distribution of the mean, we draw 1000 samples of size 60 and calculate the mean for each such sample.
+
+```{r}
+smeans <- rep(NA, 1000)
+for (i in 1:1000) {
+    rsample <- sample(popn, size=60)
+    smeans[i] <- mean(rsample)
+}
+```
+
+Here is the frequency histogram of the sampling distribution of the mean.
+
+```{r}
+qplot(smeans, geom = "histogram", fill = I("firebrick"))
+```
+
+## Comparing the Population Distribution, Sample, and Sample Distribution of the Mean
+
+Here are the density histograms of the population (grey), our first sample (blue), and the sampling distribution of the mean(red), all drawn in the same plot.
+
+
+```{r}
+qplot(popn, y = ..density.., geom = "histogram",
+      binwidth=1) +
+  geom_histogram(aes(x = s60, y = ..density..), 
+                 alpha = 0.65, fill = "steelblue", 
+                 binwidth=1) +
+  geom_histogram(aes(x = smeans, y = ..density..), 
+                 alpha = 0.65, fill = "firebrick", 
+                 binwidth=1) +
+  geom_vline(xintercept = true.mu, linetype = "dashed") + 
+  lims(x = c(35,90))
+```
+
+## Mean of the Sampling distribution of the Mean
+
+The mean of the sampling distribution converges on the true population mean.
+
+```{r}
+c(mean(smeans), true.mu)
+```
+
+## Dispersion of the Sampling Distribution of the Mean
+
+Let's return to a function we defined in the last class, to explore how the sampling distribution of the mean changes with sample size.
+
+```{r}
+sampling.distn.of.mean <- function(X, size = 25, nreps = 1000) {
+  sample.means <- rep(NA, nreps)
+  for(i in 1:nreps) {
+    sample.n <- sample(X, size)
+    sample.means[i] = mean(sample.n)  
+  }
+  return(sample.means)
+}
+```
+
+We can then use this to generate sampling distributions of the mean for samples of different size as follows.
+
+```{r}
+smeans.25 <- sampling.distn.of.mean(popn, size = 25)
+smeans.50 <- sampling.distn.of.mean(popn, size = 50)
+smeans.100 <- sampling.distn.of.mean(popn, size = 100)
+smeans.250 <- sampling.distn.of.mean(popn, size = 250)
+smeans.500 <- sampling.distn.of.mean(popn, size = 500)
+```
+
+And then we plot the data
+```{r}
+ggplot() + 
+  geom_histogram(aes(x = smeans.25, fill="s25"), alpha=0.65) + 
+  geom_histogram(aes(x = smeans.50, fill="s50"), alpha=0.65) +
+  geom_histogram(aes(x = smeans.100, fill="s100"), alpha=0.65) +
+  geom_histogram(aes(x = smeans.250, fill="s250"), alpha=0.65) +
+  geom_histogram(aes(x = smeans.500, fill="s500"), alpha=0.65) +
+  scale_fill_manual("Sample Size",
+                    values=c(s25  = "black",
+                             s50  = "steelblue",
+                             s100 = "firebrick",
+                             s250 = "chocolate",
+                             s500 = "gold"),
+                    breaks = c("s25", "s50", "s100", "s250", "s500")) + 
+  labs(x = "Sample Estimates of Mean")
+```
+
+
+# Standard Error of the Mean
+We see from the graph above that our estimates of the mean cluster more tightly about the true mean as our sample size increases. Let's quantify that by calculating the standard deviation of our mean estimates as a function of sample size.
+
+The standard deviation of the sampling distribution of a statistic of interest is called the "Standard Error" of that statistic. Here, through simulation, we are estimating the "Standard Error of the Mean".
+
+```{r}
+se.25 <- sd(smeans.25)
+se.50 <- sd(smeans.50)
+se.100 <- sd(smeans.100)
+se.250 <- sd(smeans.250)
+se.500 <- sd(smeans.500)
+
+ssize <- c(25, 50, 100, 250, 500)
+SE <- c(se.25, se.50, se.100, se.250, se.500)
+
+qplot(ssize, SE) + 
+  labs(x = "Sample size", y = "Std Error of Mean")
+```
+
+You can show mathematically for normally distributed data, that the expected Standard Error of the Mean as a function of sample size is:
+$$
+\mbox{Standard Error of Mean} = \frac{\sigma}{\sqrt{n}}
+$$
+where $\sigma$ is the population standard deviation, and $n$ is the sample size.
+
+Let's compare that theoretical expectation to our simulated estimates.
+
+```{r}
+theory <- sapply(seq(10,500,10), function(x){ sd(popn)/sqrt(x) })
+
+qplot(ssize, SE) + 
+  geom_line(aes(x = seq(10,500,10), y = theory), color="red") +
+  labs(x = "Sample size", y = "Std Error of Mean") 
+
+```
+
+# Sampling Distribution of the Standard Deviation
+
+Above we explored how the sampling distribution of the mean.  We can similarly explore the sampling distribution of any other statistics, such as the standard deviation.
+
+
+```{r}
+
+pop.sd <- function(x) {
+  sqrt(var(x)*(length(x)-1)/length(x))
+}
+
+sampling.distn.of.sd <- function(X, size = 25, nreps = 1000) {
+  sample.sd <- rep(NA, nreps)
+  for(i in 1:nreps) {
+    sample.n <- sample(X, size)
+    sample.sd[i] = sd(sample.n)  
+  }
+  return(sample.sd)
+}
+```
+
+As before we use the function we wrote to to generate sampling distributions (of the standard deviation) for samples of different sizes.
+
+```{r}
+sd.25 <- sampling.distn.of.sd(popn, size = 25)
+sd.50 <- sampling.distn.of.sd(popn, size = 50)
+sd.100 <- sampling.distn.of.sd(popn, size = 100)
+sd.250 <- sampling.distn.of.sd(popn, size = 250)
+sd.500 <- sampling.distn.of.sd(popn, size = 500)
+```
+
+And we can plot these:
+
+```{r}
+ggplot() + 
+  geom_histogram(aes(x = sd.25, fill="s25"), alpha=0.65) + 
+  geom_histogram(aes(x = sd.50, fill="s50"), alpha=0.65) +
+  geom_histogram(aes(x = sd.100, fill="s100"), alpha=0.65) +
+  geom_histogram(aes(x = sd.250, fill="s250"), alpha=0.65) +
+  geom_histogram(aes(x = sd.500, fill="s500"), alpha=0.65) +
+  scale_fill_manual("Sample Size",
+                    values=c(s25  = "black",
+                             s50  = "steelblue",
+                             s100 = "firebrick",
+                             s250 = "chocolate",
+                             s500 = "gold"),
+                    breaks = c("s25", "s50", "s100", "s250", "s500")) + 
+  labs(x = "Sample Estimates of the Standard Deviation")
+```
+
+You can show mathematically for normally distributed data, that the expected Standard Error of the Standard Deviation is approximately
+
+$$
+\mbox{Standard Error of Standard Deviation} \approx \frac{\sigma}{\sqrt{2(n-1)}}
+$$
+where $\sigma$ is the population standard deviation, and $n$ is the sample size.
+
+As before, let's visually compare the theoretical expectation to our simulated estimates.
+
+
+```{r}
+theory.sd <- sapply(seq(10,500,10), function(x){ sd(popn)/sqrt(2*(x-1)) })
+SE.sd <- c(sd(sd.25), sd(sd.50), sd(sd.100), sd(sd.250), sd(sd.500))
+
+qplot(ssize, SE.sd) + 
+  geom_line(aes(x = seq(10,500,10), y = theory.sd), color="red") +
+  labs(x = "Sample size", y = "Std Error of Std Deviation") 
+
+```
+
