@@ -1,0 +1,110 @@
+---
+title: "Bio 204: Problem Set 04"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# <font color = "red">Due Date: 24 October 2016</font>
+
+
+# Problem 1: Dice rolls in role playing games
+
+"Dungeons and Dragons" (D&D) is a table top role-playing games designed in the 70s. D&D uses a 20-sided die to decide the outcomes of combat or feats of skill.
+
+## Problem 1.1 (2 pts)
+
+During a battle, what is the probability of rolling a 15 or higher under the D&D rules?
+
+## Problem 1.2 (3 extra credit)
+
+"Tunnels and Trolls" (T&T) is another fantasy role-playing game from the 70s. T&T uses three 6-sided dice to decide the outcomes of combat or feats of skill. What is the probability of rolling a 12 or better under the T&T rules?
+
+# Problem 2 (5 pts)
+
+A 2012 Pew Research survey asked 2,373 randomly sampled registered voters their political affiliation (Republican, Democrat, or Independent) and whether or not they identify as swing voters. 35% of respondents identified as Independent, 23% identified as swing voters, and 11% identified as both.
+
+(a) Are being Independent and being a swing voter disjoint, i.e. mutually exclusive?
+
+(b) What percent of voters are Independent but not swing voters?
+
+(c) What percent of voters are Independent or swing voters?
+
+(d) What percent of voters are neither Independent nor swing voters?
+
+(e) Is the event that someone is a swing voter independent of the event that someone is a political Independent?
+
+
+
+
+# Problem 3: The `births` data
+
+The `births.txt` data set is available at the following URL:
+
+https://raw.githubusercontent.com/Bio204-class/bio204-datasets/master/births.txt
+
+The `births` data set contains information on 150 cases of mothers and their newborns in North Carolina. The variables in the data set are: mother's age (mAge), father's age (fAge), weeks of gestation (weeks), whether the birth was premature or full term (premature), number of OB/GYN visits (visits), mother's weight gained in pounds (weight), sex of the baby (sexBaby), and whether the mother was a smoker (smoke).
+
+
+
+## Problem 3.1 (3 pts)
+
+Use the `table` function to create a contingency table (see OpenIntro Stats p. 43 and p. 92) from the `births` data set, summarizing the joint counts for the categorical variables `premature` and `smoke`.
+
+Your output should look something like this, with the correct values substituted for `n1`, `n2`, etc.
+
+```
+         nonsmoker smoker
+  full term        n1     n2
+  premie           n3     n4
+```
+
+```{r}
+# Problem 3.1 code here
+```
+
+## Problem 3.2 (3 pts)
+
+The `addmargins` function can be used to add marginal sums to a matrix or table.  Use `addmargins` to add the marginal sums to the contingency table you created above.  Your output should look something like this (again with the appropriate sums in each cell):
+
+```
+           nonsmoker   smoker   Sum
+  full term        n1      n2   (n1+n2)
+  premie           n3      n4   (n3+n4)  
+  Sum         (n1+n3) (n2+n4)   (n1+n2+n3+n4)
+```
+
+```{r}
+# Problem 3.2 code here
+```
+
+## Problem 3.3 (6 pts)
+
+From the table you created in 1.2, calculate the following probabilities:
+
+(a) $P(\mathrm{smoker})$
+
+(b) $P(\mathrm{premie})$
+
+(c) $P(\mathrm{smoker} \cap \mathrm{premie})$
+
+(d) $P(\mathrm{nonsmoker} \cap \mathrm{premie})$
+
+(e) $P(\mathrm{premie}|\mathrm{nonsmoker})$
+
+(f) $P(\mathrm{premie}|\mathrm{smoker})$
+
+
+# Problem 4 (4 pts)
+
+Lupus is a disease where antibodies that are supposed to attack foreign cells to prevent infections instead see plasma proteins as foreign bodies, leading to a high risk of blood clotting. It is believed that 2% of the population suffer from this disease. The test is 98% accurate if a person actually has the disease. The test is 74% accurate if a person does not have the disease. There is a line from the  television show "House" that is often used after a patient tests positive for lupus: “It’s never lupus.” (see https://www.youtube.com/watch?v=bueW1i9kQao). Do you think there is truth to this statement? Use appropriate probabilities to support your answer.
+
+```{r}
+# R code in support of your calculations
+```
