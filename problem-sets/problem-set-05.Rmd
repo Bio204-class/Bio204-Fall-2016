@@ -21,12 +21,15 @@ The file [possums.txt](https://github.com/Bio204-class/bio204-datasets/raw/maste
 
 ## Problem 1a (3 pts)
 
-For the variable `skullW` (skull width) evaluate how well the normal approximation holds by creating a density histogram and correspondingdensity plot (given the sample estimates of the mean and standard deviation).
+For the variable `skullW` (skull width) evaluate how well the normal approximation holds by creating a density histogram and corresponding density plot (given the sample estimates of the mean and standard deviation).
 
 ```
 # Problem 1a code
-
 ```
+
+Your plot should look something like this:
+
+![Possum Skull Width Histogram and Normal Distn w/same mean and sd](./possum-skullw.png)
 
 ## Problem 1b (3 pts)
 
@@ -36,6 +39,10 @@ Create a a normal probability plot showing observed vs theoretical quantiles for
 # Problem 1b code
 
 ```
+
+Your plot should look something like this:
+
+![Possum Skull Width Normal Probability Plot](./possum-probplot.png)
 
 ## Problem 1c (3 pts)?
 
@@ -55,25 +62,34 @@ Consider a normal distribution, $\sim N(\mu = 20, \sigma = 2)$.
 
 Both the mean and median are measures of location. In this problem you will complare the sampling distributions of these two statistics.
 
-Write R code to simulate the sampling distribution of the **mean** and **median** for random samples of size 10, 25, 50, 100, 200, 400, and 800.  For each sample size, simulate the sampling distribution with 500 random samples and estimate the standard error of each statistic.
+Write R code to simulate the sampling distribution of the **mean** and **median** for random samples of size 50.  Simulate the sampling distribution with 1000 random samples and generate a figure like the one below, comparing the sampling distributions for the two statistics.  
 
 ```
 # Problem 2a code
 
 ```
 
+Your plot should look something like this:
+
+![Sampling Distributions of Mean and Median](./samplingdistn-mean-median.png)
+
 ## Problem 2b (4 pts)
 
-Generate a  pair of line plots comparing the standard error of both statistics of interest (mean and median) for the different sample sizes.  
+Write R code to simulate the sampling distribution of the **mean** and **median** for random samples of size: 10, 25, 50, 100, 200, 400, and 800.  For each sample size, simulate the sampling distribution with 500 random samples and estimate the standard error of each statistic. Generate a  pair of line plots comparing the standard error of both statistics of interest (mean and median) for the different sample sizes.  
 
 ```
 # Problem 2b code
 
 ```
 
-## Problem 2c (2 pts)
+Your plot should look something like this:
 
-Which of the two statistics, the mean or median, has the smaller standard error?
+![Standard Error of Mean and Median](./SE-mean-median.png)
+
+
+## Problem 2c (3 pts)
+
+From the simulations and figures you generated above, what conclusions do you draw about the sampling distributions of the mean and median?
 
 ```
 # Problem 2c code
