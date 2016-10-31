@@ -29,7 +29,7 @@ For the variable `skullW` (skull width) evaluate how well the normal approximati
 
 Your plot should look something like this:
 
-![Possum Skull Width Histogram and Normal Distn w/same mean and sd](./possum-skullw.png)
+![Possum Skull Width Histogram and Normal Distn w/same mean and sd](https://raw.githubusercontent.com/Bio204-class/Bio204-Fall-2016/master/problem-sets/possum-skullw.png)
 
 ## Problem 1b (3 pts)
 
@@ -42,7 +42,9 @@ Create a a normal probability plot showing observed vs theoretical quantiles for
 
 Your plot should look something like this:
 
-![Possum Skull Width Normal Probability Plot](./possum-probplot.png)
+![Possum Skull Width Normal Probability Plot](https://raw.githubusercontent.com/Bio204-class/Bio204-Fall-2016/master/problem-sets/possum-probplot.png)
+
+
 
 ## Problem 1c (3 pts)?
 
@@ -71,7 +73,7 @@ Write R code to simulate the sampling distribution of the **mean** and **median*
 
 Your plot should look something like this:
 
-![Sampling Distributions of Mean and Median](./samplingdistn-mean-median.png)
+![Sampling Distributions of Mean and Median](https://raw.githubusercontent.com/Bio204-class/Bio204-Fall-2016/master/problem-sets/samplingdistn-mean-median.png)
 
 ## Problem 2b (4 pts)
 
@@ -84,7 +86,7 @@ Write R code to simulate the sampling distribution of the **mean** and **median*
 
 Your plot should look something like this:
 
-![Standard Error of Mean and Median](./SE-mean-median.png)
+![Standard Error of Mean and Median](https://raw.githubusercontent.com/Bio204-class/Bio204-Fall-2016/master/problem-sets/SE-mean-median.png)
 
 
 ## Problem 2c (3 pts)
