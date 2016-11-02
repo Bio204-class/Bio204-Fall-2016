@@ -341,3 +341,16 @@ ggplot() +
 p.value.2sided <- 2 * pnorm(abs(z.totalL), lower.tail = FALSE)
 p.value.2sided
 ```
+
+
+# Outcomes of hypothesis tests
+
+In standard statistical hypothesis testing there are two real possibilities -- the null hypothesis is true or the alternative hypothesis is true. When you carry out a hypothesis test, there are two possible test outcomes --  you reject the null hypothesis or you fail to reject the null hypothesis.  It is typical to represent the different combinations of the reality / statistical tests in a table like the following:
+
+|            | do not reject $H_0$           | reject $H_0$                   |
+|------------|:-----------------------------:|:------------------------------:|
+|$H_0$ true  | okay                          | Type 1 error (false positive), $\alpha$ |
+|$H_A$ true  | Type 2 error (false negative), $\beta$ | okay                           |
+
+When we specify a significance threshold, $\alpha$, for hypothesis testing, this controls the Type I error (false positive rate) of our test.  The false negative rate is often referred to as $\beta$.  In general, there is a tradeoff between the false positive and false negative rate -- the lower the false positive rate the higher the false negative rate, and vice versa.
+
