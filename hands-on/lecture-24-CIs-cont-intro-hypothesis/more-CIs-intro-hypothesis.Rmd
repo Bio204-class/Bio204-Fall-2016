@@ -1,0 +1,343 @@
+---
+title: "Confidence intervals continued, Intro to hypothesis testing"
+author: "Paul M. Magwene"
+date: "October 31, 2016"
+output:
+  html_document:
+    fig_height: 4
+    fig_width: 5
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: '2'
+  html_notebook:
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: 2
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="markup",
+                      message = FALSE, cache = FALSE)
+options(digits = 4)
+```
+
+
+
+# Hypothesis Testing
+
+
+## Example: Morphological measurements of brushtail possums
+
+The [possums data set](https://github.com/Bio204-class/bio204-datasets/raw/master/possum.txt) is a tab-delimited file that contains morphological measurements on 104 brushtail possums (*Trichosurus vulpecula*). This data set contains information on variables such as sex, age, head length, skull width, etc.
+
+![Brushtail possums, source: Wikipedia](https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Trichosurus_vulpecula_1.jpg/293px-Trichosurus_vulpecula_1.jpg)
+
+
+
+### Possum tail length
+
+Previous studies of brushtail possums in Australia have established that the mean tail length of adult possums is 37.86cm.  I am studying an isolated population of possums in the state of Victoria, and I am interested in whether mean tail length of Victorian possums is shorter than that of possums in the rest of Australia.
+
+
+## Null and Alternative Hypotheses
+
+We  begin the process of statistical inference by formalizing our question of interest in terms of a "null hypothesis" and an "alternative hypothesis".
+
+
+* Null hypothesis, $H_0$: The average tail length of Victoria possums is the same as those in the
+rest of Australia ($\mu = 37.86$)
+* Alternative hypotehesis, $H_A$: The average tail length of Victoria possums is less than the rest of
+Australia ($\mu < 37.86$)
+
+Since I have an a priori reason to believe the difference in tail length is
+shorter, this is a "one-tailed" hypothesis test (pun intended!).
+
+## Libraries and data
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(cowplot)
+
+# read the possum data from the course repository
+possums <- read.delim("https://github.com/Bio204-class/bio204-datasets/raw/master/possum.txt")
+
+#possums <- read.delim("/Users/pmagwene/gits/github/bio204-datasets/possum.txt")
+
+# examine the data set
+dim(possums)
+names(possums)
+
+# get the subset of the possums representing the Victoria population
+vic <- filter(possums, pop == "Vic")
+```
+
+
+## Assess approximate normality for Victoria possum tail length
+
+```{r, fig.width = 8, fig.height = 3.5}
+null.mean <- 37.86  # mean under null hypothesis
+
+vic.mean <- mean(vic$tailL)
+vic.sd <- sd(vic$tailL)
+min.tailL <- min(vic$tailL)
+max.tailL <- max(vic$tailL)
+tail.range <- seq(min.tailL, max.tailL, length.out = 100)
+
+# histogram and corresponding normal with same mean and sd
+p1 <- ggplot() + 
+  geom_histogram(aes(x = vic$tailL, y = ..density..), bins = 9) + 
+  geom_line(aes(x = tail.range, 
+                y = dnorm(tail.range, mean = vic.mean, sd = vic.sd)),
+            color = 'red', size = 1) +
+  labs(x = "Tail Length", y = "Density", title = "Distribution of Victoria Possum\nTail Lengths")
+
+# to create the normal probability plot line in ggplot we need to explicitly
+# calculate the slope and intercept
+observed.q1 <- quantile(vic$tailL, 0.25)
+observed.q3 <- quantile(vic$tailL, 0.75)
+predicted.q1 <- qnorm(0.25)
+predicted.q3 <- qnorm(0.75)
+slope <- (observed.q3 - observed.q1)/(predicted.q3 - predicted.q1)
+intercept <- observed.q1 - slope * predicted.q1
+
+# note generate the plot
+p2 <- ggplot() + 
+  geom_abline(slope = slope, intercept = intercept, 
+              color = 'red', size = 1) + 
+  geom_qq(aes(sample = vic$tailL))
+
+plot_grid(p1, p2)
+```
+
+## A reminder about confidence intervals
+
+Confidence intervals provide plausible ranges of values for statistics of interest, such as the mean.  They are useful because we recognize that the point estimates we calculate from any given sample will vary somewhat if we were to repeat the experiment of interest again. Confidence intervals are based on our understanding of the **sampling distribution** of the statistic of interest.
+
+Recall that given a population with a mean $\mu$ and a standard deviation $\sigma$, the sampling distribution of the mean for samples of size $n$ is normally distributed, $N(\mu, \sigma/\sqrt{n})$.  We refer to the standard deviation of the sampling distribution of a statistic as the **standard error** of that statistic.  Confidence intervals are calculated in terms of multiples of the standard error of the statistic of interest.  For example, because the sampling distribution of the mean is normally distributed, we know that ~95% of sample means should fall within about 2 (more precisly 1.96) standard errors of the population mean.  Our knowledge of the sampling distribution thus allows us to estimate intervals with difference levels of confidence.
+
+```{r}
+# This is an example of generating a set of simulated samples of size n
+# without resorting to for loops
+
+n <- length(vic$tailL)
+SE.vic <- vic.sd/sqrt(length(vic$tailL))
+
+# generate 1000 samples of size n as a single vector
+sim.tailL <- rnorm(1000 * n, mean = vic.mean, sd = vic.sd)
+
+# split into individual samples of siz en
+sim.samples <- split(sim.tailL, cut(seq_along(sim.tailL), 1000, labels = FALSE))
+
+# calculate mean for each simulated sample
+sim.means <- sapply(sim.samples, mean)
+
+ggplot() + 
+  geom_histogram(aes(x = sim.means, y = ..density..), bins=25) + 
+  geom_vline(xintercept = vic.mean, color = 'red') + 
+  geom_vline(xintercept = vic.mean - 1.96*SE.vic, color = 'red', linetype = 'dashed') + 
+  geom_vline(xintercept = vic.mean + 1.96*SE.vic, color = 'red', linetype = 'dashed') + 
+  labs(title = "Simulated sampling distribution of\nmean tail length for Victoria population\nand 95% CI for mean",
+       x = "Mean tail length", y = "Density")
+
+```
+
+
+## Testing hypotheses using confidence intervals
+
+One way we can decide whether to reject the null hypothesis is to ask whether the mean under the null hypothesis falls within some reasonably large confidence intervals (e.g. 95% CI) for the mean, as estimated from the Victoria data set.  If not, than that provides some evidence to reject the null hypothesis.
+
+```{r}
+SE.tailL <- vic.sd/sqrt(length(vic$tailL))
+CI95.tailL <- c(vic.mean - 1.96*SE.tailL, vic.mean + 1.96*SE.tailL)
+CI95.tailL
+```
+
+The 95% confidence interval for the mean tail length in the Victoria possum population is (`r CI95.tailL`)
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot() + 
+  geom_vline(xintercept = null.mean, linetype = 'dashed') + 
+  annotate("text", x = 1.025 * null.mean, y = 1.5, label = "H0: mu = 37.86") + 
+  geom_point(aes(x = vic.mean, y = 1), color = 'red') + 
+  geom_line(aes(x = CI95.tailL, y = 1), color = 'red') + 
+  annotate("text", x = vic.mean, y = 1.5, label = "Victoria mean\nand 95% CI", color = 'red') +
+  xlim(35,40) + ylim(0,3) + labs(x = "Tail Length (cm)", y = "")
+```
+
+Because the mean under the null hypothesis is very far from the 95% CI for the mean in the Victoria population, we take this as fairly strong evidence against the null hypothesis (i.e. we judge it unlikely that the Victoria sample was drawn from a population with the same mean tail length observed in the rest of Australia).
+
+
+# P-values
+
+The CI approach above let us assess, in a general way, whether there's evidence to reject the null hypothesis. In the above example, we might state our finding something along the lines of "We are 95% confident that the mean tail length of Victoria possums is between 35.44 and 36.43mm. We therefore reject the null hypothesis that Victoria possums have the same mean tail length as other Australian possums." We would make the same statement for any other estimated 95% CI that did not overlap 37.86.  Thus the CI approach doesn't really tell us anything about the strength of evidence against the null hypothesis, it just gives us a basis by which to reject it (or fail to reject it).
+
+## Strength of evidence against the null hypothesis
+
+To assess the strength of the evidence against the null hypothesis, we can ask "what is the probability of observing data (or a statistic of interest) **at least as favorable** to the alternative hypothesis, **if the null hypothesis were true**?"
+
+When considering a statistic of interest the usual way to phrase this question is with respect to the expected *sampling distribution of the statistic of interest* under the null hypothesis. For example, when testing a hypothesis involving means, we would ask "What is the probability of observing my sample mean, with respect to the expected distribution of sample means, if the null hypothesis was true."
+
+P-value
+:  The p-value is the probability of observing data at least as favorable to the alternative hypothesis as our current data set, if the null hypothesis is true.
+
+
+
+## Calculating the P-value for the Possum tail example
+
+Let's apply this to our possum tail example.  Our null hypothesis, $H_0$, is that the mean tail length in Victoria possums should be the same as the rest of Australia ($\mu=37.86$). Let's assume the standard deviation of tail length under the null and alternative hypothesis is the same, so that we can estimate the sampling distribution of the mean under the null hypothesis by using our sample standard deviation.
+
+First we calculate the expected distribution of the sample means under the null hypothesis and plot this sampling distribution.  We then draw the observed sample mean for comparison.
+
+```{r}
+null.mean = 37.86
+null.se <- SE.tailL  # because we assumed H0 and HA have same SE
+
+H0.plot <- 
+  ggplot(data.frame(x = c(36.5, 39)), aes(x)) + 
+  stat_function(fun = dnorm, args = list(mean = null.mean, sd = null.se), n = 200) +
+  labs(x = "Mean Tail Length (cm)", y = "Density", 
+       title = "Sampling Distrbution of Mean Tail Length\nUnder the Null Hypothesis") +
+  xlim(34,40)
+
+H0.plot + 
+  geom_segment(aes(x = vic.mean, y = 0.5, 
+                   xend = vic.mean, yend = 0),
+               color = 'red',
+               arrow = arrow(length = unit(0.5, "cm"))) + 
+  annotate("text", x = vic.mean, y = 0.6, label = "Victoria mean", color = 'red') 
+```
+
+
+
+```{r}
+
+```
+
+It looks like our observed mean is very far to the left of the expected distribution of the samples mean for the given null hypothesis.  Let's express that as a Z-score. Recall that Z-scores are defined in terms of the number of standard deviations an observation sits from the mean $\frac{x - \mu}{\sigma}$.  In the present example, $x = \overline{x}$, $\mu = \mu_{H_0}$, and $\sigma = {SE}_{H_0}$.
+
+```{r}
+z = (vic.mean - null.mean)/null.se
+z
+```
+
+Our calculation confirms our graphical intuition. Our observed sample mean is 7.6 standard errors to the left of the the mean under the null hypothesis!
+
+Since this is a one-sided hypothesis test, with our alternative hypothesis to the left of the null hypothesis, we only have to the sum probability to the left of our observed value of the mean.
+
+```{r}
+p.value.1sided <- pnorm(abs(z), lower.tail = FALSE)
+p.value.1sided
+```
+
+That is a vanishingly small probability, so we consider this strong evidence to reject the null-hypothesis.
+
+
+ 
+
+# A two-sided hypothesis test
+
+Let's test another hypothesis, this time a two-side one. We wish to test the hypothesis that the mean total body length of Victoria possums is not equal to the mean total length of other Australian possums, which previous studies have shown to be 86.8 cm.
+
+## Null and Alternative Hypotheses
+
+* $H_0$: The average body length of Victoria possums is the same as those in the
+rest of Australia ($\mu = 86.8$)
+* $H_A$: The average body length of Victoria possums is different than the rest of
+Australia ($\mu \neq 86.8$)
+
+Because in this case, we have no *a priori* hypotheses about the potential direction of the difference in average body length, this is a "two-tailed" hypothesis test (i.e. we want to consider the possibility that Victoria possums have either shorter or longer bodies than other Australian possums).
+
+## Assessing normality
+
+First a histogram:
+```{r}
+qplot(vic$totalL, bins = 9)
+```
+
+Normal probability plot
+```{r}
+qqnorm(vic$totalL)
+qqline(vic$totalL)
+```
+
+Our histogram and probability plot raise some questions about the assumption of approximately normality.  However we have a decently large sample size ($n = 46$) and we're testing hypotheses about the equality of the mean (which tends to be fairly robust to departures from normality), so we decide to proceed (cautiously) under the normal assumption.
+
+## Confidence interval for mean total length
+
+```{r}
+null.totalL <- 86.8
+mean.totalL <- mean(vic$totalL)
+sd.totalL <- sd(vic$totalL)
+SE.totalL <- sd.totalL/sqrt(length(vic$totalL))
+CI95.totalL <- c(mean.totalL - 1.96*SE.totalL, mean.totalL + 1.96*SE.totalL)
+CI95.totalL
+```
+
+## Illustration of 95% CI relative to H0 for total length
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot() + 
+  geom_vline(xintercept = null.totalL, linetype = 'dashed') + 
+  annotate("text", x = 1.01 * null.totalL, y = 2.5, label = "H0: mu = 86.8") + 
+  geom_point(aes(x = mean.totalL, y = 1), color = 'red') + 
+  geom_line(aes(x = CI95.totalL, y = 1), color = 'red') + 
+  annotate("text", x = mean.totalL, y = 1.5, label = "Victoria mean total length\nand 95% CI", color = 'red') +
+  xlim(85,90) + ylim(0,3) + labs(x = "Total Length (cm)", y = "")
+```
+
+## Distribution of sample means under H0
+
+```{r}
+H0.totalL <- 
+  ggplot(data.frame(x = c(84, 90)), aes(x)) + 
+  stat_function(fun = dnorm, args = list(mean = null.totalL, sd = SE.totalL), n = 200) +
+  labs(x = "Mean Total Length (cm)", y = "Density", 
+       title = "Sampling Distrbution of Mean Total Length\nUnder the Null Hypothesis") +
+  xlim(84,90)
+
+H0.totalL + 
+  geom_segment(aes(x = mean.totalL, y = 0.2, 
+                   xend = mean.totalL, yend = 0),
+               color = 'red',
+               arrow = arrow(length = unit(0.5, "cm"))) + 
+  annotate("text", x = mean.totalL, y = 0.3, label = "Victoria mean\ntotal length", color = 'red')   
+```
+
+## Z-score for observed mean relative to distn of samples means under H0
+
+```{r}
+z.totalL = (mean.totalL - null.totalL)/SE.totalL
+z.totalL
+```
+
+
+
+## Figure illustrating region of PDF at least as extreme as observed mean
+
+```{r}
+x.totalL <- seq(84,90,length.out = 200)
+density.totalL <- dnorm(x.totalL, mean = null.totalL, sd = SE.totalL)
+
+left.area <- seq(84, null.totalL - z.totalL * SE.totalL, length.out = 100)
+right.area <- seq(null.totalL + z.totalL * SE.totalL, 90, length.out= 100)
+
+ggplot() + 
+  geom_line(aes(x = x.totalL, y = density.totalL)) + 
+  geom_area(aes(x = left.area, y = dnorm(left.area, mean = null.totalL, sd = SE.totalL)),
+            fill = "gray") + 
+  geom_area(aes(x = right.area, y = dnorm(right.area, mean = null.totalL, sd = SE.totalL)),
+            fill = "gray")
+  
+```
+
+
+## P-value for two-sided test
+
+```{r}
+p.value.2sided <- 2 * pnorm(abs(z.totalL), lower.tail = FALSE)
+p.value.2sided
+```
