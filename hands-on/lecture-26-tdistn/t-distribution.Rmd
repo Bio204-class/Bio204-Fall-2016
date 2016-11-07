@@ -275,34 +275,49 @@ plot_grid(p2.t, p3.t, p10.t, nrow = 1)
 
 # More comparisons of the t- and normal distributions
 
-```{r}
+```{r, fig.width=8}
 ggplot(data.frame(x = breaks), aes(x = x)) + 
-  stat_function(fun = dt, args = list(df = 2), xlim = c(-6,6), n = 200, 
-                geom = "line", size = 1, color = "blue") + 
-  stat_function(fun = dt, args = list(df = 4), xlim = c(-6,6), n = 200, 
-                geom = "line", size = 1, color = "purple") + 
-  stat_function(fun = dt, args = list(df = 30), xlim = c(-6,6), n = 200, 
-                geom = "line", size = 1, color = "pink") +   
-  stat_function(fun = dnorm, xlim = c(-6,6), n = 200, 
-                geom = "line", size = 0.75, color = "red", alpha=0.75, linetype="dashed") +
+  stat_function(aes(color = "t-distn, df=2"),
+                fun = dt, args = list(df = 2), xlim = c(-6,6), n = 200, 
+                geom = "line", size = 1) + 
+  stat_function(aes(color = "t-distn, df=4"),
+                fun = dt, args = list(df = 4), xlim = c(-6,6), n = 200, 
+                geom = "line", size = 1) + 
+  stat_function(aes(color = "t-distn, df=30"),
+                fun = dt, args = list(df = 30), xlim = c(-6,6), n = 200, 
+                geom = "line", size = 1) +   
+  stat_function(aes(color = "normal distn"),
+                fun = dnorm, xlim = c(-6,6), n = 200, 
+                geom = "line", size = 0.75, alpha=0.75, linetype="dashed") +
+  scale_colour_manual(name='', values=c("t-distn, df=2"='blue', 
+                                        "t-distn, df=4"='purple',
+                                        "t-distn, df=30"='pink',
+                                        "normal distn"='red')) +
   labs(x = "Z-scores", y = "Density")
 ```
 
 ## Area under curve to left of Z-score = -2
 
-```{r, fig.width = 8, fig.height = 4}
+```{r, fig.width = 12, fig.height = 3}
 
 breaks <- seq(-6,6,length.out = 200)
 norm.density <- dnorm(breaks)
 t.density.df5 <- dt(breaks, df = 5)
 
+
+left.interval <- seq(-6, -2, length.out = 100)
+
 plot.norm <- ggplot() + 
-  geom_line(aes(x = breaks, y = norm.density)) + 
-  labs(x = "X", y = "density", title = "Normal distribution")
+  geom_line(aes(x = breaks, y = norm.density), color="red", size=1) + 
+  geom_area(aes(x = left.interval, y = dnorm(left.interval)), fill = "gray") + 
+  geom_text(aes(x = -5.5, y = 0.3, label = "P(z <= 2) = 0.023", hjust="left")) + 
+  labs(x = "Z-score", y = "density", title = "Normal distribution")
 
 plot.t <- ggplot() + 
-  geom_line(aes(x = breaks, y = t.density.df5)) + 
-  labs(x = "X", y = "density", title = "t-distribution, df = 5")
+  geom_line(aes(x = breaks, y = t.density.df5), color="steelblue", size=1) + 
+  geom_area(aes(x = left.interval, y = dt(left.interval, df = 5)), fill = "gray") +  
+  geom_text(aes(x = -5.5, y = 0.3, label = "P(z <= 2) = 0.051", hjust="left")) + 
+  labs(x = "Z-score", y = "density", title = "t-distribution, df = 5")
 
 plot_grid(plot.norm, plot.t, nrow = 1)
 ```

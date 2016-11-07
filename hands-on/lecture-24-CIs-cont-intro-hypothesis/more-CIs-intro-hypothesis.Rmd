@@ -129,7 +129,7 @@ SE.vic <- vic.sd/sqrt(length(vic$tailL))
 # generate 1000 samples of size n as a single vector
 sim.tailL <- rnorm(1000 * n, mean = vic.mean, sd = vic.sd)
 
-# split into individual samples of siz en
+# split into individual samples of size n
 sim.samples <- split(sim.tailL, cut(seq_along(sim.tailL), 1000, labels = FALSE))
 
 # calculate mean for each simulated sample
