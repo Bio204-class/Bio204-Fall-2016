@@ -1,0 +1,60 @@
+---
+title: "The Central Limit Theorem"
+author: "Paul M. Magwene"
+date: "November 06, 2016"
+output:
+  html_document:
+    fig_height: 4
+    fig_width: 5
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: '2'
+  html_notebook:
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: 2
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="markup",
+                      message = FALSE, cache = FALSE)
+options(digits = 4)
+```
+
+
+For any large sample of size n, the sample mean x is approximately normally distributed. (No matter what shaped distribution the data is actually drawn from).
+
+If X is a random variable with mean  and variance 2, then the mean of n 2
+observations of X is distributed normally with mean  and variance n .
+
+If X is a normally distributed random variable, then the CLT holds for any value of n. If X is not a normally distributed random variable, then for the CLT to hold, the size of n required depends on how closely the distribution matches the normal.
+
+
+
+Sampling Distribution of the Sample Mean for Non-normal Underlying Distributions
+
+Up to now, in our discussions of sampling distributions, standard errors, and confidence intervals, our simulations have involved drawing samples from populations that are normally distributed. We found that the sampling distribution of the sample mean is itself normally distributed.
+What would happen if we changed our underlying distribution to something that was not normally distributed?
+
+Let's explore this issue by simulating sampling distributions drawn from two decidely non-normal distributions -- uniform and exponential.
+
+
+Uniform distribution
+In a uniform distribution, all possible outcomes are equally likely. A continuous uniform distribution is usually defined in terms of the the interval $(a,b)$ giving the upper and lower limits of the possible outcomes, with the mean  $\mu = \frac{1}{2}(a+b)$ and standard deviation $\sigma = \sqrt{\frac{1}{12}(b-a)^2}$
+
+Exponential Distribution
+Let's carry out a similar simulation where the underlying distribution is exponential (we'll discuss the exponential in detail in an upcoming lecture).
+
+
+Central Limit Theorem
+You can keep doing simulation experiments like the ones above with arbitrary distributions (discrete or continuous) that have well defined means ($\mu$) and finite standard deviations ($\sigma$). What you will find is that regardless of the shape of the underlying distribution the sampling distribution of the mean will, as $n$ gets large, converge to a normal distribution that has mean $\mu$ and standard deviation $\frac{\sigma}{\sqrt{n}}$.
+This surprising and observation is a manifestation of the Central Limit Theorem (CLT).
+Here's a concise definition of the CLT from a nice web resource on probability from the University of Utah:
+Roughly, the central limit theorem states that the distribution of the average (or sum) of a large number of independent, identically distributed variables will be approximately normal, regardless of the underlying distribution.
+The CLT is one reason that so real-world random process have probability distributions that are approximately normal. We'll revisit the CLT in various forms in later lectures.
+
+
+

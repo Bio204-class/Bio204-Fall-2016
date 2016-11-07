@@ -1,0 +1,61 @@
+---
+title: "In-class practice: Simulating other sampling distributions"
+author: "Paul M. Magwene"
+date: "October 31, 2016"
+output:
+  html_document:
+    fig_height: 4
+    fig_width: 5
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: '2'
+  html_notebook:
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: 2
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="markup",
+                      message = FALSE, cache = FALSE)
+options(digits = 4)
+```
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+
+
+```{r}
+#1.  draw samples of size 50 from standard normal distn, N(0,1)
+
+iqrs <- rep(NA, 1000)
+
+for(i in 1:1000) {
+  s <- rnorm(50)
+  s.iqr <- IQR(s)
+  iqrs[i] <- s.iqr
+}
+
+qplot(iqrs, bins=50)
+```
+
+```{r}
+iqrs.mean <- mean(iqrs)
+iqrs.sd <- sd(iqrs)
+
+ggplot() + 
+  geom_histogram(aes(x = iqrs, y = ..density..), bins = 50) +
+  stat_function(aes(xlim=c(0,3)), n=250, 
+                args=list(mean = iqrs.mean, sd = iqrs.sd), 
+                fun=dnorm, color='red')
+
+```
+
+

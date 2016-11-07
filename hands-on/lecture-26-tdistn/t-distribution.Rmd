@@ -1,0 +1,310 @@
+---
+title: "The Central Limit Theorem"
+author: "Paul M. Magwene"
+date: "November 06, 2016"
+output:
+  html_document:
+    fig_height: 4
+    fig_width: 5
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: '2'
+    code_folding: hide
+  html_notebook:
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: 2
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="markup",
+                      message = FALSE, cache = FALSE)
+options(digits = 4)
+```
+
+
+
+# Review: Confidence intervals for means and calculations of P-values for means rely on estimates of the sampling error of the mean
+
+Under the assumption that:
+
+ 1. The observations in are sample are independent
+ 2. The observations come from a population with a nearly normal distribution, $\sim N(\mu,\sigma)$
+ 3. The sample size is relatively large ($n \geq 30$)
+
+We learned that the sampling distribution of the mean for samples of size $n$ is $\sim N(\mu,\sigma/\sqrt{n})$. We call the standard deviation of the sampling distribution of the mean, $\sigma/\sqrt{n}$, the "standard error of the mean" (${SE}_\overline{x}$).
+
+In general, we do not know the population paramters, $\mu$ and $\sigma$, so instead we use the information we do have, the sample estimates $\overline{x}$ and $s_x$, to estimate the standard error of the mean: 
+
+\[
+SE_\overline{x} = s_x/\sqrt{n}
+\]
+
+Such estimates of the standard error feed into our calculations of confidence intervals and p-values.
+
+For example, we calculate confidence intervals in terms of z-score multiples of the SE:
+
+\[
+{CI}_\overline{x}  = \overline{x} \pm  (z \times {SE}_\overline{x})
+\]
+
+Similarly, to estimate a p-value (relative to the null hypothesis) for our observed value of the mean, $\overline{x}$, we calculated a z-score:
+
+$$\begin{eqnarray*}
+z &=& \frac{\overline{x} - \mu_{H0}}{{SE}_\overline{x}}
+\end{eqnarray*}$$
+
+Using this z-score we then calculate one- or two-tailed probabilities for observing z-scores as extreme of $z$ (remember that z-scores should be $N(0,1)$). 
+
+
+
+# What happens when our sample size is small?
+
+One of the important assumptions underlying the discussion above was that the size of our sample was relatively large. In the rest of this notebook we're going to use simulations to explore what happens when that assumption is violated. This will help us develop an understanding of the "t-distribution".
+
+
+```{r}
+set.seed(20161107)
+
+# setup the  popn distribution we're sampling from
+mu <- 10
+sigma <- 1
+
+# list of sample sizes we'll generate
+ssizes <- c(2, 3, 4, 5, 7, 10, 20, 30)
+
+# number of simulations to carry out *for each sample size*
+nsims <- 1000
+
+# create a list to hold simulation results
+list.sims <- list()
+
+for (i in ssizes) {
+  s.means <- rep(NA, nsims)
+  s.sds <- rep(NA, nsims)
+  s.SEs <- rep(NA, nsims)
+  s.zscores <- rep(NA, nsims)
+  for (j in 1:nsims) {
+    s <- rnorm(i, mean = mu, sd = sigma)
+    s.means[j] <- mean(s)
+    s.sds[j] <- sd(s)
+    SE <- sd(s)/sqrt(i)
+    s.SEs[j] <- SE
+    s.zscores[j] <- (mean(s) - mu)/SE
+  }
+  df <- data.frame(means = s.means, sds = s.sds, SEs = s.SEs, zscores = s.zscores)
+  list.sims[[toString(i)]] <- df
+}
+  
+```
+
+
+## Even for small samples, the sampling deviation of the mean is well behaved
+
+Let's first look at the sampling distribution of the mean.
+
+```{r}
+library(ggplot2)
+library(RColorBrewer)
+
+clrs <- brewer.pal(8, "Dark2")
+
+ggplot() + 
+  geom_histogram(aes(x = list.sims[["2"]]$means), fill = clrs[1]) + 
+  geom_histogram(aes(x = list.sims[["3"]]$means), fill = clrs[2]) + 
+  geom_histogram(aes(x = list.sims[["4"]]$means), fill = clrs[3]) + 
+  geom_histogram(aes(x = list.sims[["5"]]$means), fill = clrs[4]) + 
+  geom_histogram(aes(x = list.sims[["7"]]$means), fill = clrs[5]) +  
+  geom_histogram(aes(x = list.sims[["10"]]$means), fill = clrs[6]) + 
+  geom_histogram(aes(x = list.sims[["20"]]$means), fill = clrs[7]) + 
+  geom_histogram(aes(x = list.sims[["30"]]$means), fill = clrs[8]) + 
+  labs(x = "Mean (x)", y = "Count")
+```
+
+As one would hope, the sample means appear to be centered around the true mean, regardless of sample size. The standard error of these distributions decreases with increasing sample size as we would expect.
+
+Let's pcalculate the location of each sampling distribution for samples of different sizes to confirm our visual assessment.
+
+```{r}
+sdist.means <- c()
+for(i in ssizes){
+  sdist.means <- c(sdist.means,  mean(list.sims[[toString(i)]]$means))
+}
+sdist.means
+```
+
+
+## For small samples, sample standard deviations systematically underestimate the population standard deviation
+
+Now we turn to "sampling distributions of the standard deviation". Like sampling distributions of the mean, we would hope that the sampling distributions of the standard deviation should be centered around the true population value, $\sigma$.
+
+In our simulation we specified that $\sigma = 1$ for the underlying population. Let's examine that samples of size $n={3, 5}$ and $30$.
+
+```{r, fig.width = 12}
+library(cowplot)
+
+p3 <- ggplot() + 
+  geom_histogram(aes(x = list.sims[["3"]]$sds), bins=20, alpha=0.65) +
+  labs(x = "sd(x)", y = "Frequency", title = "Sampling Distn of Std Dev, n = 3")
+  
+p5 <- ggplot() + 
+  geom_histogram(aes(x = list.sims[["5"]]$sds), bins=20, alpha=0.65) +
+  labs(x = "sd(x)", y = "Frequency", title = "Sampling Distn of Std Dev, n = 5")
+  
+p30 <- ggplot() + 
+  geom_histogram(aes(x = list.sims[["30"]]$sds), bins=20, alpha=0.65) + 
+  labs(x = "sd(x)", y = "Frequency", title = "Sampling Distn of Std Dev, n = 30")
+
+plot_grid(p3, p5, p30, nrow=1)
+```
+
+Uh oh! There's very clear indication that the the sampling distribution of standard deviations is not centered around 1 for $n=3$, and it looks like that may be the case for $n=5$.
+
+To explore this further, let's generate a plot that shows, for each sample size $n$, the mean of the sampling distribution of the standard deviation.
+
+```{r}
+expected.stds <- rep(1, length(ssizes))  # all expected standard deviations are 1
+
+mean.stds <- c()
+for(i in ssizes) {
+  mean.stds <- c(mean.stds, mean(list.sims[[toString(i)]]$sds))  
+}
+
+ggplot() +
+  geom_line(aes(x = ssizes, y = expected.stds), color = 'black', linetype='dashed') +
+  geom_point(aes(x = ssizes, y = mean.stds), color = 'red') +
+  geom_line(aes(x = ssizes, y = mean.stds), color = 'red') +
+  labs(x = "Sample Size", y = "Mean of Sampling Distn of Std Dev") + 
+  ylim(0, 1.1)
+
+```
+
+
+# Underestimates of the standard deviation given small $n$ lead to overly dispersed sample mean z-scores
+
+Now we'll look at the distribution of estimated z-scores of the sample mean relative to the true population mean. We expect that z-scores should have a mean of 0 and a standard deviation of 1.
+
+```{r, fig.width = 8, fig.height = 10}
+
+# setup breaks for histograms
+breaks <- seq(-10,10,length.out = 50)
+
+p2 <- ggplot() +
+  geom_histogram(aes(x = c(list.sims[["2"]]$zscores), y = ..density..), alpha=0.5, breaks=breaks) +
+  stat_function(aes(x = breaks), fun = dnorm, xlim = c(-10,10), n = 200, 
+                geom = "line", color = "red") + 
+  labs(x = "Z-scores", y = "Density", title = "Z-scores, n = 2")
+
+p3 <- ggplot() +
+  geom_histogram(aes(x = c(list.sims[["3"]]$zscores), y = ..density..), alpha=0.5, breaks=breaks) +
+  stat_function(aes(x = breaks), fun = dnorm, xlim = c(-10,10), n = 200, 
+                geom = "line", color = "red") + 
+  labs(x = "Z-scores", y = "Density", title = "Z-scores, n = 3")
+
+p4 <- ggplot() +
+  geom_histogram(aes(x = c(list.sims[["4"]]$zscores), y = ..density..), alpha=0.5, breaks=breaks) +
+  stat_function(aes(x = breaks), fun = dnorm, xlim = c(-10,10), n = 200, 
+                geom = "line", color = "red") + 
+  labs(x = "Z-scores", y = "Density", title = "Z-scores, n = 4")
+
+p5 <- ggplot() +
+  geom_histogram(aes(x = c(list.sims[["5"]]$zscores), y = ..density..), alpha=0.5, breaks=breaks) +
+  stat_function(aes(x = breaks), fun = dnorm, xlim = c(-10,10), n = 200, 
+                geom = "line", color = "red") + 
+  labs(x = "Z-scores", y = "Density", title = "Z-scores, n = 5")
+
+p7 <- ggplot() +
+  geom_histogram(aes(x = c(list.sims[["7"]]$zscores), y = ..density..), alpha=0.5, breaks=breaks) +
+  stat_function(aes(x = breaks), fun = dnorm, xlim = c(-10,10), n = 200, 
+                geom = "line", color = "red") + 
+  labs(x = "Z-scores", y = "Density", title = "Z-scores, n = 7")
+
+p10 <- ggplot() +
+  geom_histogram(aes(x = c(list.sims[["10"]]$zscores), y = ..density..), alpha=0.5, breaks=breaks) +
+  stat_function(aes(x = breaks), fun = dnorm, xlim = c(-10,10), n = 200, 
+                geom = "line", color = "red") + 
+  labs(x = "Z-scores", y = "Density", title = "Z-scores, n = 10")
+
+p20 <- ggplot() +
+  geom_histogram(aes(x = c(list.sims[["20"]]$zscores), y = ..density..), alpha=0.5, breaks=breaks) +
+  stat_function(aes(x = breaks), fun = dnorm, xlim = c(-10,10), n = 200, 
+                geom = "line", color = "red") + 
+  labs(x = "Z-scores", y = "Density", title = "Z-scores, n = 20")
+
+p30 <- ggplot() +
+  geom_histogram(aes(x = c(list.sims[["30"]]$zscores), y = ..density..), alpha=0.5, breaks=breaks) +
+  stat_function(aes(x = breaks), fun = dnorm, xlim = c(-10,10), n = 200, 
+                geom = "line", color = "red") + 
+  labs(x = "Z-scores", y = "Density", title = "Z-scores, n = 30")
+
+plot_grid(p2, p3, p4, p5, p7, p10, p20, p30, ncol = 2)
+
+
+```
+
+
+Examining the plots above, we see that for the smallest sample sizes the observed z-scores of the mean have much heavier tails than we predict. As sample size increases, this effect becomes less and less noticable such that by the time $n=30$ the expected normal PDF fits the observed z-scores very well. The heavy tails at small $n$ are driven by the fact that small samples tend to underestimate the population standard deviation.
+
+
+# The t-distribution is the appropriate distribution for describing sample mean z-scores when $n$ is small
+The problem of inflated mean z-scores was recognized in the early 20th century by William Gosset, an employee at the Guinness Brewing Company. He published a paper, under the pseudonym "Student", giving the appropriate distribution for describing z-scores as a function of the sample size $n$. Gosset's distribution is known as the "t-distribution" or "Student's t-distribution".
+
+The t-distribution is specified by a single parameter, called degrees of freedom ($df$) where ${df} = n - 1$. As $df$ increases, the t-distribution becomes more and more like the normal such that when $n \geq 30$ it's nearly indistinguishable from the standard normal distribution.
+
+In the figures below we compare the t-distribution and the normal distribution for their fit to our simulated data at $n = {2, 3, 10}$.
+
+```{r, fig.width = 12}
+p2.t <- p2 + stat_function(aes(x = breaks), fun = dt, args = list(df = 1),
+                           xlim = c(-10,10), n = 200,
+                           geom = "line", size = 1, color = "blue") 
+
+p3.t <- p3 + stat_function(aes(x = breaks), fun = dt, args = list(df = 2),
+                           xlim = c(-10,10), n = 200,
+                           geom = "line", size = 1, color = "blue") 
+
+p10.t <- p10 + stat_function(aes(x = breaks), fun = dt, args = list(df = 9),
+                           xlim = c(-10,10), n = 200,
+                           geom = "line", size = 1, color = "blue") 
+
+plot_grid(p2.t, p3.t, p10.t, nrow = 1)
+```
+
+
+# More comparisons of the t- and normal distributions
+
+```{r}
+ggplot(data.frame(x = breaks), aes(x = x)) + 
+  stat_function(fun = dt, args = list(df = 2), xlim = c(-6,6), n = 200, 
+                geom = "line", size = 1, color = "blue") + 
+  stat_function(fun = dt, args = list(df = 4), xlim = c(-6,6), n = 200, 
+                geom = "line", size = 1, color = "purple") + 
+  stat_function(fun = dt, args = list(df = 30), xlim = c(-6,6), n = 200, 
+                geom = "line", size = 1, color = "pink") +   
+  stat_function(fun = dnorm, xlim = c(-6,6), n = 200, 
+                geom = "line", size = 0.75, color = "red", alpha=0.75, linetype="dashed") +
+  labs(x = "Z-scores", y = "Density")
+```
+
+## Area under curve to left of Z-score = -2
+
+```{r, fig.width = 8, fig.height = 4}
+
+breaks <- seq(-6,6,length.out = 200)
+norm.density <- dnorm(breaks)
+t.density.df5 <- dt(breaks, df = 5)
+
+plot.norm <- ggplot() + 
+  geom_line(aes(x = breaks, y = norm.density)) + 
+  labs(x = "X", y = "density", title = "Normal distribution")
+
+plot.t <- ggplot() + 
+  geom_line(aes(x = breaks, y = t.density.df5)) + 
+  labs(x = "X", y = "density", title = "t-distribution, df = 5")
+
+plot_grid(plot.norm, plot.t, nrow = 1)
+```
+
+The area to the left of -2 for the normal distribution is `r pnorm(-2)`, while for a t-distribution with 5 degrees of freedom it is `r pt(-2, df = 5)`.
