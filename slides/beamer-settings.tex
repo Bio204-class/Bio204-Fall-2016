@@ -1,4 +1,12 @@
-\setlength{\parskip}{0.75\baselineskip} 
+\setlength{\parskip}{0.7\baselineskip} 
+\setbeamerfont{footnote}{size=\tiny}
+
+% Macro for adding credits to bottom right of slide
+\usepackage[absolute,overlay]{textpos}
+\newcommand{\credit}[1]{%
+  \begin{textblock*}{\paperwidth}(0pt, 0.99\textheight)
+    \raggedleft \tiny\itshape #1\hspace{.5em}
+  \end{textblock*}}
 
 %% Theme Settings
 \useinnertheme[shadow,outline]{chamfered} 

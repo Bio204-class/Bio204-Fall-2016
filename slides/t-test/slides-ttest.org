@@ -23,6 +23,9 @@
 [[file:fig-t-vs-normal.pdf]]
 
 
+\credit{Credit: OpenIntro Stats, 3rd ed.}
+
+
 * The \(t\)-distribution, cont.
 
 - Centered at zero, like the standard normal distribution
@@ -33,6 +36,8 @@
 [[file:fig-tdistn-df.pdf]]
 
 What happens to the shape of the distribution as the degrees of freedom increases?
+
+\credit{Credit: OpenIntro Stats, 3rd ed.}
 
 * One sample inference using the \(t\)-distribution
 
@@ -49,6 +54,7 @@ What happens to the shape of the distribution as the degrees of freedom increase
 T = \frac{\text{point estimate} - \text{null value}}{SE}
 \]
 
+\credit{Credit: OpenIntro Stats, 3rd ed.}
 
 * One-sample t-test, example
 
@@ -67,6 +73,8 @@ This data set can be downloaded from the class wiki as the file ~gene-expression
 #+ATTR_LATEX: :height 0.30\textheight
 [[file:fig-onesample-ttest.pdf]]
 
+
+\credit{Image credit: Krzywinski \& Altman 2014}
 
 * Hands-on, one-sample t-test
 You have established from previous studies that the expression level of YFG1 in control mice is 10.  You wish to determine whether the average expression of YFG1 in mice treated with drug X differs from control mice.
@@ -119,6 +127,7 @@ This data set is available on the course wiki as ~gene-expression-2sample.csv~
 #+ATTR_LATEX: :height 0.30\textheight
 [[file:fig-twosample-ttest.pdf]]
 
+\credit{Image credit: Krzywinski \& Altman 2014}
 
 * Hands-on, two-sample t-tests in R
 
@@ -140,28 +149,30 @@ Paired t-tests are used in the case where sample observations are correlated, su
 * Paired t-test, test statistic
 
 - Let the variable of interest for object $i$ in the paired conditions be designated $x_i$ and $y_i$
-- Let \( d_i = y_i − x_i \) be the paired difference for object $i$
-- Let $\overline{d}$ be the mean difference and $s_d$ be the standard deviation of the differences
-- The standard error of mean difference is  $SE(\overline{d}) = \frac{s_d}{\sqrt{n}}$
+- Let \( D_i = y_i - x_i \) be the paired difference for object $i$
+- Let $\overline{D}$ be the mean difference and $s_D$ be the standard deviation of the differences
+- The standard error of mean difference is  $SE(\overline{D}) = \frac{s_D}{\sqrt{n}}$
 
 The test statistic is 
 \[
-T = \frac{\overline{d}}{SE(\overline{d})}
+T = \frac{\overline{D}}{SE(\overline{D})}
 \] 
 
-Under the null hypothesis, this statistic follows a t-distribution with $n − 1$ degrees of freedom.
+Under the null hypothesis, this statistic follows a t-distribution with $n-1$ degrees of freedom.
 
 * Paired t-test, visual representation
 
 #+ATTR_LATEX: :width 0.98\textwidth
 [[file:fig-paired-ttest.pdf]]
 
+\credit{Image credit: Krzywinski \& Altman 2014}
+
 * Paired t-test, example
 
 You measure the expression of the gene YFG1 in five mice.  You then treat those five mice with drug X and measure gene expression again.
 
 - YFG1 expression before treatment = {11, 10, 10.5, 8.87, 9.75}
-- YFG1 experssion after treatment = {12, 11.75, 11.25, 10.5, 10}
+- YFG1 expression after treatment = {12, 11.75, 11.25, 10.5, 10}
 
 This data set is available as ~gene-expression-paired.csv~ from the course wiki.
 

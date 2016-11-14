@@ -1,4 +1,4 @@
-% Created 2016-11-14 Mon 02:11
+% Created 2016-11-14 Mon 03:07
 % Intended LaTeX compiler: xelatex
 \documentclass[presentation]{beamer}
 \usepackage{graphicx}
@@ -29,7 +29,7 @@
 
 \maketitle
 
-\begin{frame}[label={sec:orgbab9c2e}]{The \(t\)-distribution}
+\begin{frame}[label={sec:org7ba87ad}]{The \(t\)-distribution}
 \begin{itemize}
 \item When working with small samples, and the population standard deviation is unknown (usually the case), the uncertainty of the standard error estimate is addressed by using the \alert{\alert{t-distribution}}
 
@@ -43,10 +43,13 @@
 \begin{center}
 \includegraphics[height=0.30\textheight]{fig-t-vs-normal.pdf}
 \end{center}
+
+
+\credit{Credit: OpenIntro Stats, 3rd ed.}
 \end{frame}
 
 
-\begin{frame}[label={sec:orgdc0209f}]{The \(t\)-distribution, cont.}
+\begin{frame}[label={sec:orgb69da39}]{The \(t\)-distribution, cont.}
 \begin{itemize}
 \item Centered at zero, like the standard normal distribution
 
@@ -58,9 +61,11 @@
 \end{center}
 
 What happens to the shape of the distribution as the degrees of freedom increases?
+
+\credit{Credit: OpenIntro Stats, 3rd ed.}
 \end{frame}
 
-\begin{frame}[label={sec:orga3e0574}]{One sample inference using the \(t\)-distribution}
+\begin{frame}[label={sec:orge122282}]{One sample inference using the \(t\)-distribution}
 \begin{itemize}
 \item If \(n < 30\), sample means follow a \(t\)-distribution with \(SE = \frac{s}{\sqrt{n}}\) and \(df = n - 1\)
 \item Conditions:
@@ -79,10 +84,11 @@ What happens to the shape of the distribution as the degrees of freedom increase
 \[
 T = \frac{\text{point estimate} - \text{null value}}{SE}
 \]
+
+\credit{Credit: OpenIntro Stats, 3rd ed.}
 \end{frame}
 
-
-\begin{frame}[fragile,label={sec:orge873c04}]{One-sample t-test, example}
+\begin{frame}[fragile,label={sec:org79c1e5d}]{One-sample t-test, example}
  You treat a sample of mice with a drug, X, and measure the expression of the gene YFG1 following treatment. For a sample of five mice you observe the following expression values:
 
 \begin{itemize}
@@ -92,7 +98,7 @@ T = \frac{\text{point estimate} - \text{null value}}{SE}
 This data set can be downloaded from the class wiki as the file \texttt{gene-expression-1sample.csv}
 \end{frame}
 
-\begin{frame}[label={sec:org26ca729}]{One-sample t-test, relevant distributions and comparisons}
+\begin{frame}[label={sec:org1a6936c}]{One-sample t-test, relevant distributions and comparisons}
 \begin{center}
 \includegraphics[height=0.33\textheight]{fig-onesample-distns.pdf}
 \end{center}
@@ -101,10 +107,12 @@ This data set can be downloaded from the class wiki as the file \texttt{gene-exp
 \begin{center}
 \includegraphics[height=0.30\textheight]{fig-onesample-ttest.pdf}
 \end{center}
+
+
+\credit{Image credit: Krzywinski \& Altman 2014}
 \end{frame}
 
-
-\begin{frame}[fragile,label={sec:orgce6e76d}]{Hands-on, one-sample t-test}
+\begin{frame}[fragile,label={sec:org482fa1e}]{Hands-on, one-sample t-test}
  You have established from previous studies that the expression level of YFG1 in control mice is 10.  You wish to determine whether the average expression of YFG1 in mice treated with drug X differs from control mice.
 
 \begin{enumerate}
@@ -118,7 +126,7 @@ Hint: Recall the \texttt{dt}, \texttt{pt}, \texttt{qt} and \texttt{rt} functions
 \end{frame}
 
 
-\begin{frame}[fragile,label={sec:orgabef869}]{t-tests in R}
+\begin{frame}[fragile,label={sec:org59aafcc}]{t-tests in R}
  The R function \texttt{t.test} makes it easy to calculate one- and two-sample t-tests
 
 \begin{enumerate}
@@ -129,7 +137,7 @@ Hint: Recall the \texttt{dt}, \texttt{pt}, \texttt{qt} and \texttt{rt} functions
 \end{frame}
 
 
-\begin{frame}[label={sec:org33bcefb}]{Two-sample t-test}
+\begin{frame}[label={sec:org2412b80}]{Two-sample t-test}
 The two-sample t-test is used to determine if two populations, represented by observed samples, have equal means.
 
 
@@ -140,7 +148,7 @@ T = \frac{\overline{X_1} - \overline{X_2}}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2
 \end{frame}
 
 
-\begin{frame}[fragile,label={sec:orga5f968a}]{Two-sample t-tests, example}
+\begin{frame}[fragile,label={sec:org4707751}]{Two-sample t-tests, example}
  You treat samples of mice with two drugs, X and Y.  We want to know if the two drugs have the same average effect on expression of the gene YFG1. The measurements of YFG1 in samples treated with X and Y are as follows: 
 
 
@@ -153,7 +161,7 @@ This data set is available on the course wiki as \texttt{gene-expression-2sample
 \end{frame}
 
 
-\begin{frame}[label={sec:org13f7c3c}]{Two-sample t-tests, relevant distributions and comparisons}
+\begin{frame}[label={sec:org0b9d4d0}]{Two-sample t-tests, relevant distributions and comparisons}
 \begin{center}
 \includegraphics[height=0.33\textheight]{fig-twosample-distns.pdf}
 \end{center}
@@ -162,10 +170,11 @@ This data set is available on the course wiki as \texttt{gene-expression-2sample
 \begin{center}
 \includegraphics[height=0.30\textheight]{fig-twosample-ttest.pdf}
 \end{center}
+
+\credit{Image credit: Krzywinski \& Altman 2014}
 \end{frame}
 
-
-\begin{frame}[fragile,label={sec:org0bba875}]{Hands-on, two-sample t-tests in R}
+\begin{frame}[fragile,label={sec:org01d311b}]{Hands-on, two-sample t-tests in R}
  The \texttt{t.test} function we introduced earlier can be used to carry out two-sample t-tests. 
 
 \begin{enumerate}
@@ -178,44 +187,46 @@ This data set is available on the course wiki as \texttt{gene-expression-2sample
 
 
 
-\begin{frame}[label={sec:org0d363c2}]{Paired t-test}
+\begin{frame}[label={sec:orgabdc0ea}]{Paired t-test}
 Paired t-tests are used in the case where sample observations are correlated, such as ``before-after'' studies where the same individual or object at different time points or paired comparisons where some aspect of the same object is measured in two different conditions. The repeated measurement of the same individual/object means that we can't treat the two sets of observations as independent.
 \end{frame}
 
-\begin{frame}[label={sec:orgac5d08c}]{Paired t-test, test statistic}
+\begin{frame}[label={sec:orgb0a590c}]{Paired t-test, test statistic}
 \begin{itemize}
 \item Let the variable of interest for object \(i\) in the paired conditions be designated \(x_i\) and \(y_i\)
-\item Let \(d_i = y_i − x_i\) be the paired difference for object \(i\)
-\item Let \(\overline{d}\) be the mean difference and \(s_d\) be the standard deviation of the differences
-\item The standard error of mean difference is  \(SE(\overline{d}) = \frac{s_d}{\sqrt{n}}\)
+\item Let \(D_i = y_i - x_i\) be the paired difference for object \(i\)
+\item Let \(\overline{D}\) be the mean difference and \(s_D\) be the standard deviation of the differences
+\item The standard error of mean difference is  \(SE(\overline{D}) = \frac{s_D}{\sqrt{n}}\)
 \end{itemize}
 
 The test statistic is 
 \[
-T = \frac{\overline{d}}{SE(\overline{d})}
+T = \frac{\overline{D}}{SE(\overline{D})}
 \] 
 
-Under the null hypothesis, this statistic follows a t-distribution with \(n − 1\) degrees of freedom.
+Under the null hypothesis, this statistic follows a t-distribution with \(n-1\) degrees of freedom.
 \end{frame}
 
-\begin{frame}[label={sec:org26adda4}]{Paired t-test, visual representation}
+\begin{frame}[label={sec:org8b600c2}]{Paired t-test, visual representation}
 \begin{center}
 \includegraphics[width=0.98\textwidth]{fig-paired-ttest.pdf}
 \end{center}
+
+\credit{Image credit: Krzywinski \& Altman 2014}
 \end{frame}
 
-\begin{frame}[fragile,label={sec:orga4b5f87}]{Paired t-test, example}
+\begin{frame}[fragile,label={sec:org1aef768}]{Paired t-test, example}
  You measure the expression of the gene YFG1 in five mice.  You then treat those five mice with drug X and measure gene expression again.
 
 \begin{itemize}
 \item YFG1 expression before treatment = \{11, 10, 10.5, 8.87, 9.75\}
-\item YFG1 experssion after treatment = \{12, 11.75, 11.25, 10.5, 10\}
+\item YFG1 expression after treatment = \{12, 11.75, 11.25, 10.5, 10\}
 \end{itemize}
 
 This data set is available as \texttt{gene-expression-paired.csv} from the course wiki.
 \end{frame}
 
-\begin{frame}[fragile,label={sec:org4a8bb79}]{Hands-on, paired t-test in R}
+\begin{frame}[fragile,label={sec:org418bda3}]{Hands-on, paired t-test in R}
  \begin{enumerate}
 \item Use the \texttt{t.test} function to carry out a paired t-test for paired gene expression data set.
 \item Compare your results to the two-sample t-test for the same data if you treat it as unpaired. How do the results differ?  Can you provide an intuitive explanation for why you would get different results when treating the data as paired vs unpaired?
