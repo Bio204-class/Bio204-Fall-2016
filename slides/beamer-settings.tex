@@ -1,0 +1,24 @@
+\setlength{\parskip}{0.75\baselineskip} 
+
+%% Theme Settings
+\useinnertheme[shadow,outline]{chamfered} 
+\usecolortheme{beaver}
+\beamertemplatenavigationsymbolsempty
+
+%% Font Settings
+\usepackage[no-math]{fontspec}
+\defaultfontfeatures{Scale = MatchLowercase}
+\setmainfont{Lucida Bright OT}
+\setsansfont{Lucida Sans OT}
+\setmonofont{PragmataPro}
+\setmathrm{Lucida Bright Math OT}
+\setmathsf{Lucida Sans OT}
+\usefonttheme{structurebold}
+
+%% Minted settings
+\usepackage[breaklines]{minted}
+\usepackage{mdframed}
+\surroundwithmdframed[leftmargin=3em,backgroundcolor=gray!5]{minted}
+
+\definecolor{links}{HTML}{2A1B81}
+\hypersetup{colorlinks,linkcolor=,urlcolor=magenta}
