@@ -1,0 +1,117 @@
+---
+title: "Introduction to Statitistical Power"
+author: "Paul M. Magwene"
+date: "November 16, 2016"
+output:
+  html_document:
+    fig_height: 4
+    fig_width: 5
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: '2'
+  html_notebook:
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: 2
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="markup",
+                      message = FALSE, cache = FALSE)
+options(digits = 4)
+```
+
+
+# Outcomes of hypothesis tests
+
+In standard statistical hypothesis testing there are two real possibilities -- the null hypothesis is true or the alternative hypothesis is true. When you carry out a hypothesis test, there are two possible test outcomes --  you reject the null hypothesis or you fail to reject the null hypothesis.  It is typical to represent the different combinations of the reality / statistical tests in a table like the following:
+
+|            | do not reject $H_0$           | reject $H_0$                   |
+|------------|:-----------------------------:|:------------------------------:|
+|$H_0$ true  | okay                          | Type 1 error (false positive), $\alpha$ |
+|$H_A$ true  | Type 2 error (false negative), $\beta$ | okay                           |
+
+When we specify a significance threshold, $\alpha$, for hypothesis testing, this controls the Type I error (false positive rate) of our test.  The false negative rate is often referred to as $\beta$.  In general, there is a tradeoff between the false positive and false negative rate -- the lower the false positive rate the higher the false negative rate, and vice versa.
+
+# Statistical Power
+
+The *power* of a test is the probability that a random sample will lead to a rejection of a false null hypothesis.
+
+Mathematically we define the power of a statistical test as:
+$$
+\text{Power}\ = P(\text{reject}\ H_0\ |\ H_A \text{ is true})
+$$
+
+In words, this is the probability that the null hypothesis is rejected, conditional on the alternative hypothesis being true.
+
+If $\beta$ is the false negative rate, then 
+$$
+\text{Power}\ = 1 - \beta
+$$
+
+
+# Exploring statistical power for one-sample t-tests
+
+We'll use a one-sample t-tests to illustrate the concept of statistical power. For this example, we'll explore the power of the t-test to distinguish between the null hypothesis that the data of interest are $H_0 \sim N(\mu=0,\sigma=1)$ and a true underlying distribution $H_A \sim N(\mu \neq 0, \sigma=1)$.
+
+## Effect of sample size on power
+
+First we'll hold the effect size ( $|\mu_{H_A} - \mu_{H_0}|$ ) constant and vary sample size.  Consider the population distributions below for the null hypothesis (red) and true underlying distribution (black).  Both have the same standard deviation ($\sigma = 1$) and differ only in their means ($\mu_{H_0} = 0$ and $\mu_{H_A} = 0.5$).
+
+![Distributions under null hypothesis (red) and the true distribution for the example in the text](./fig-H0distn-vs-TrueDistn.png)
+
+
+### Sampling distributions of the mean
+
+Now imagine taking samples of size n=10, n=25, and n=50.  What will happen to the **sampling distributions of the mean**?  We've encountered this repeatedly before -- the sampling distribution of the mean should be centered around the true population mean, and should have standard deviations given by $\frac{\sigma}{\sqrt{n}}$ (remember that the standard deviation of a sampling distribution is called a "standard error").
+
+Here is what the expected sampling distributions of the mean look like for the null and true distributions with samples of size 10, 25, and 50.
+
+![Sampling distributions of the mean under the null hypothesis (red) and the true distribution for the example in the text](./fig-H0Sampdistns-vs-TrueSampdistns.png)
+
+
+From the figures above we see that as sample size increases, the sampling distributions of the mean for the null and true distributions have less and less overlap, suggesting that as sample size increases the probability that we corrected reject the null hypothesis will increase as well.
+
+
+## Exploring power with simulations: varying sample size
+
+In general one doesn't know either $\mu_{H_A}$ or $\sigma$ so these parameters need to be estimated from the data itself.  Because of this, in the simulations below we use the t-distribution to model the sampling distribution of the mean under the null hypothesis.
+
+Each set of simulations below estimates the probability that you reject that null hypothesis, given the alternative hypothesis is true for a fixed effect size.  The significance threshold, $\alpha = 0.5$, for all the simulations.
+
+#### n = 10
+
+With sample size n = 10, the percent of simulations where we failed to reject H0 is: 71.3, and hence, the percent of simulations where we correctly rejected H0 is: 28.7.
+
+![](./fig-powersim-n10.png)
+
+#### n = 25
+
+With sample size n = 25, the percent of simulations where we failed to reject H0 is: 29.9, and hence, the percent of simulations where we correctly rejected H0 is: 70.1.
+
+![](./fig-powersim-n25.png)
+
+#### n = 50
+
+With sample size n = 50, the percent of simulations where we failed to reject H0 is: 5.7, and hence, the percent of simulations where we correctly rejected H0 is: 94.3.
+
+![](./fig-powersim-n50.png)
+
+#### Power for various sample sizes
+
+We can repeat this exercise for multiple sample sizes as shown below.
+
+![](./fig-powercurve.png)
+
+## Varying both sample size and effect size
+
+In the simulations above we kept the effect size (the difference between the mean of the null and true distributions in our example) constant.  Now let's explore how both sample size and effect size influence power. We'll consider three different scenarios -- $\mu_{H_A} = 1$, $\mu_{H_A} = 0.5$, and $\mu_{H_A} = 0.25$ ($\mu_{H_0} = 0$ in all three cases). As before,  the significance threshold, $\alpha = 0.5$, for all the simulations.
+
+![](./fig-powercurves-variable-effects.png)
+
+As intuition would suggest, we need to consider sample size and effect size when considering the power of a test.  We can get away with fewer samples of the effect size is very large.
+
+
