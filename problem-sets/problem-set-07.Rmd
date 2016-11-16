@@ -1,0 +1,49 @@
+---
+title: "Bio 204: Problem Set 07"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# <font color = "red">Due Date: 21 November 2016</font>
+
+
+
+# Problem 1 (9 pts)
+
+The file [stemcell-esc.csv](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/datasets/stemcell-esc.csv) has information on the change in heart function for sheep treated with embryonic stem cells following a heart attack. The file contains information on 9 sheep.  You are interested in evaluating whether treatment with stem cells following a heart attack results is accompanied by a change of heart function on average (note: untreated sheep usually show decreased heart function).
+
+For each fo the steps below, show how you would calculate the appropriate answers **without** using the built in `t.test` function.
+
+a) State an appropriate a null and alternative hypothesis (1 pt)
+
+b) Generate a histogram for the change in heart function variable using an appropriate number of bins (2 pt)
+
+c) Calculate 95% and 99% confidence intervals for the mean change in heart function (2 pts)
+
+d) Calculate the test statistic $t$ for this comparison (2 pts)
+
+e) Calculate a p-value giving the probability you'd find an average change in heart function at least as extreme as that observed, if the null hypothesis was true (2 pts)
+
+
+# Problem 2 (9 pts)
+
+The file [textbooks.csv](https://github.com/Bio204-class/bio204-datasets/raw/master/textbooks.txt) contains price information on textbook prices at a campus bookstore and Amazon.com.  You are interested in whether the average price of textbooks is less expensive from Amazon than at the campus bookstore.
+
+a) State appropriate null and alternative hypotheses for the question at hand (1 pt)
+
+b) Generate a histogram showing the distribution of differences in prices between Amazon and the campus bookstore (2 pts)
+
+c) What is the mean and 95% confidence interval for the average difference in prices between the two suppliers?  (2 pts)
+
+c) Carry out an appropriate t-test for the comparison of interesting, reporting the appropriate T-statistic and p-value (2 pts)
+
+d) Do you accept or reject the null hypothesis you stated in part (a)?  Why or why not? (2 pts)
+
+
