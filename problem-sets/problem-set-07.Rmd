@@ -34,7 +34,7 @@ e) Calculate a p-value giving the probability you'd find an average change in he
 
 # Problem 2 (9 pts)
 
-The file [textbooks.csv](https://github.com/Bio204-class/bio204-datasets/raw/master/textbooks.txt) contains price information on textbook prices at a campus bookstore and Amazon.com.  You are interested in whether the average price of textbooks is less expensive from Amazon than at the campus bookstore.
+The file [textbooks.csv](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/datasets/textbooks.csv) contains price information on textbook prices at a campus bookstore and Amazon.com.  You are interested in whether the average price of textbooks is less expensive from Amazon than at the campus bookstore.
 
 a) State appropriate null and alternative hypotheses for the question at hand (1 pt)
 
