@@ -1,0 +1,31 @@
+---
+title: "Bio 204: Problem Set 08"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# <font color = "red">Due Date: 28 November 2016</font>
+
+
+# Problem 1: Effect of feed supplements on chicken weight
+
+The [chickwts.csv](https://github.com/Bio204-class/bio204-datasets/raw/master/chickwts.csv) data set  describes the weight (in grams) of chicks grown on different feed supplements for six weeks. 
+
+## Problem 1a: Visualization and descriptive statistics (4 pts)
+
+Generate one or more figures to illustrate the distributions of chicken weights across the supplement groups, and a table summarizing key aspects of these distributions.
+
+## Problem 1b: Assesment and analysis (6 pts)
+
+Carry out an appropriate statistical analysis to determine whether the mean weight of chicks differs across the different treatment groups. Comment on how well the data meet the assumption of the test(s) you decide to apply. Provide tables, p-values, confidence intervals, etc. as appropriate to describe your analysis.
+
+## Prolbem 1c: Post-hoc comparisons
+
+If you did Problem 1b appropriately, you'll see that there is strong evience that at least one of the treatment means differs.  Carry out a post-hoc comparison of the data set to assess which means are different from each other.

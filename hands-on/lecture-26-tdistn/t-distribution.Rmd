@@ -1,5 +1,5 @@
 ---
-title: "The Central Limit Theorem"
+title: "The t-distribution"
 author: "Paul M. Magwene"
 date: "November 06, 2016"
 output:
