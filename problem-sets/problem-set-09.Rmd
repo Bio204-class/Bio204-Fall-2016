@@ -1,0 +1,74 @@
+---
+title: "Bio 204: Problem Set 09"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# <font color = "red">Due Date: 05 December 2016</font>
+
+Credit: Modified from Whitlock & Schluter 2015
+
+As always **show your calculations to get full credit**.
+
+# Problem 1: Mosquito bites and DEET
+
+Goldenda et al. (1999) carried out a trial to investigate the effectiveness of DEET in preventing mosquito bites.  They applied DEET to the underside of the arms of volunteers and placed cages containing 15 fresh mosquitous over the skin for 5 minutes. The number of bites was recorderd.  This was repeated for times at intervals of 3 hours.  The data set is available as [mosquito-bites.csv](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/datasets/mosquito-bites.csv) from the course wiki.
+
+## Problem 1a (2 pts)
+
+Generate a plot illustrating the bivariate scatter showing bites received (Y-axis) vs dose of DEET (X-axis), along with the superimposed regression line.
+
+## Problem 1b (3 pts)
+
+Fit the linear regression of bites as a function of DEET dose and generate an ANOVA table summary of the regression model.
+
+## Problem 1c (2 pts)
+
+Use the F-statistic to test the null hypothesis of zero slope.  What do you conclude?
+
+## Problem 1d (3 pts)
+
+What does the coefficient of determination measure?  Interpret the coefficient of determination for the regression model you fit to the mosquito data.
+
+
+# Problem 2: Novel mutations in offspring as a function of father's age
+
+Sperm production in humans has a relatively high mutation rate, and mutation rates are thought to increase with age.  The data set [father-age-vs-mutations.csv](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/datasets/father-age-vs-mutations.csv) contains information from a study by Kong et al. (2012) where they used whole genome sequencing of 21 father-child pairs to esimate the total number of new mutations inheritted from each father.  They als recorded the fathers age at the time of the childs conception.
+
+## Problem 2a (2 pts)
+
+Graph the relationhsip between number of new mutations (Y-axis) and father's age (X-axis). Add a regression line to your plot.
+
+## Problem 2b (4 pts)
+
+Carry out a regression of the number of new mutations as a function of father's age.  How rapidly does the number of new mutations increase with father's age?  Provide a standard error for your estimate.
+
+## Problem 2c (3 pts)
+
+What is the predicted mean number of new mutations from fathers 36 years of age?  How does this compare with the predicted number for fathers 18 years old?
+
+## Problem 2d (2 pts)
+
+Use the ANOVA approach to test the null hypothesis of no relationship between father's age and number of new mutations. Include an ANOVA table.
+
+## Problem 2e (2 pts)
+
+What fraction of the variation among fathers in the number of new mutations passed on to children is explained by father's age?
+
+
+# Problem 3: Last problem! (5 pts)
+
+Congratulations, you've made it to the very last problem on the last problem set of the spring 2016 semester!
+
+* What was the most surprising thing you learned in Bio 204?
+* What was the most useful thing you learned in Bio 204?
+* What was the most interesting or useful data visualization that you created over the course of the semester?
+* What was the topic you found most confusing?
+* Were there any methods or techniques you were hoping to learn about but didn't?
