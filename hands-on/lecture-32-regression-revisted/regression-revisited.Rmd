@@ -63,46 +63,42 @@ SS_{\text{total}} = SS_{\text{regression}} + SS_{\text{residual}}
 
 # Example data: Lion age predicted from facial pigmentation
 
-To illustrate our linear regression calculations we'll use a data set from a study of African lions.  A study by Whitman et al. (2004) showed thte amount of black coloring on the nose of male lions increases with age, and suggested that this might be used to estimate the age of unknown lions.  The lion data set is available at this link , and the bivariate relationship between age and proportion of black pigmentation looks like this:
+To illustrate our linear regression calculations we'll use a data set from a study of African lions.  A study by Whitman et al. (2004) showed thte amount of black coloring on the nose of male lions increases with age, and suggested that this might be used to estimate the age of unknown lions.  The lion data set is available at this link [lion-noses.csv](https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/datasets/lion-noses.csv) , and the bivariate relationship between age and proportion of black pigmentation looks like this:
 
+```{r}
+library(ggplot2)
+theme_set(theme_classic())
 
+# load data
+lions <- read.csv("https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/datasets/lion-noses.csv")
 
+# plot data
+lions.plot <- ggplot(lions, aes(x = proportionBlack, y = ageInYears)) + 
+  geom_point(color="red", size = 2) +
+  labs(x = "Proportion black", y = "Age (years)")
+```
 
-# Variance of the Model and Residuals
+## Fitting the regression model in R
 
-In the same way that we calculated the group mean square ($MS_\text{group}$) and error mean square ($MS_\text{error}$) in ANOVA, we can calculate a model mean square ($MS_\text{regression}$) and residual mean square ($MS_\text{residual}$) as follows:
+Fitting linear regression models in R is simple using the `lm` function, and we can generate summary summary statistics by applying the `summary` function to the object returned by `lm`:
 
-\[
-MS_\text{regression} =\frac{SS_\text{regression}}{df_\text{regression}} 
-\]
+```{r}
+lm.lions <- lm(ageInYears ~ proportionBlack, lions)
+summary(lm.lions)
+```
 
-In bivariate regression, the regression degrees of freedom, $df_\text{regression} = 1$.
+## Plotting the regression fit using ggplot
 
-The residual mean square is given by:
+To plot the regression model in ggplot we can add a call to the `geom_smooth` geom:
 
-\[
-MS_\text{regression} =\frac{SS_\text{residual}}{df_\text{residual}} 
-\]
+```{r}
+lions.plot + geom_smooth(method = lm, se = FALSE)
+```
 
-where $df_\text{residual} = n - 2$.
-
-
-# Using an ANOVA table to summarize a regression model
-
-We can organize tthe sum of squares and mean squares terms for the regression model in an ANOVA table:
-
-| Sources of variation | Sum of squares | df | Mean squares | F-ratio |
-| :------------------- | :------------- | :-: | :----------: | :-----: |
-| Regression           | $SS_\text{regression} = \sum_i(\hat{Y}_i - \bar{Y})^2$ | 1 | $\frac{SS_\text{regression}}{df_\text{regression}}$ | $\frac{MS_\text{regression}}{MS_\text{residual}}$ |
-| Residual             | $SS_\text{residual}$ | n-2 | $\frac{SS_\text{residual}}{df_\text{residual}}$ |  |
-| Total                | $SS_\text{total}$ | n-1 |  |  |
-
-
-The calculated F-ratio can be compared to the corresponding F distribution, $F_{1,n-2}$, to test the null hypothesis that the slop of the regression equals zero.
 
 # Variance "explained" by a regression model
 
-We can further use the sum-of-square decomposition to understand the relative proportion of variance "explained" (accounted for) by the regression model.
+We can  use the sum-of-square decomposition to understand the relative proportion of variance "explained" (accounted for) by the regression model.
 
 We call this quantity the "Coefficient of Determination",  designated $R^2$.  
 
@@ -112,14 +108,71 @@ R^2 = \frac{SS_\text{regression}}{SS_\text{total}} = \left( 1 - \frac{SS_\text{r
 
 The coefficient of determination is also useful in the context of ANOVA.
 
+We can extract the coefficient of determination from the summary as follows:
 
-# Standard error of the regression slope
+```{r}
+summary(lm.lions)$r.squared
+```
+
+
+
+# Variance of the Model and Residuals
+
+In the same way that we calculated the group mean square ($MS_\text{group}$) and error mean square ($MS_\text{error}$) in ANOVA, we can calculate a model mean square ($MS_\text{regression}$) and residual mean square ($MS_\text{residual}$) as follows:
+
+\[
+MS_\text{regression} =\frac{SS_\text{regression}}{df_\text{regression}} = \sum_i(\hat{Y}_i - \bar{Y})^2
+\]
+
+In bivariate regression, the regression degrees of freedom, $df_\text{regression} = 1$.
+
+The residual mean square is given by:
+
+\[
+MS_\text{residual} =\frac{SS_\text{residual}}{df_\text{residual}} = \frac{\sum_i(Y_i - \hat{Y}_i)^2}{n-2}
+\]
+
+where $df_\text{residual} = n - 2$.
+
+# Using an ANOVA table to summarize a regression model
+
+We can organize tthe sum of squares and mean squares terms for the regression model in an ANOVA table:
+
+| Sources of variation | Sum of squares | df | Mean squares | F-ratio |
+| :------------------- | :------------- | :-: | :----------: | :-----: |
+| Regression           | $SS_\text{regression} = \sum_i(\hat{Y}_i - \bar{Y})^2$ | 1 | $\frac{SS_\text{regression}}{df_\text{regression}}$ | $\frac{MS_\text{regression}}{MS_\text{residual}}$ |
+| Residual             | $SS_\text{residual} = \sum_i(Y_i - \hat{Y}_i)^2$ | n-2 | $\frac{SS_\text{residual}}{df_\text{residual}}$ |  |
+| Total                | $SS_\text{total}$ | n-1 |  |  |
+
+
+The calculated F-ratio can be compared to the corresponding F distribution, $F_{1,n-2}$, to test the null hypothesis that the slop of the regression equals zero.
+
+## Generating an ANOVA table from a regression model in R
+
+To get an ANOVA table from a regression fit by `lm` we can simply apply the `anova` function to the linear model object as shown below:
+
+```{r}
+anova(lm.lions)
+```
+
+
+
+
+# Standard error of the regression slope and intercept
 
 Like all the other statistical estimators we've looked at over the course of the semester, there is uncertainty associated with the sample estimate of the slope $b$, which is an estimate of an underlying population slope $\beta$. The standard error of $b$ is given by:
 
 \[
 SE_b = \sqrt{\frac{MS_\text{residual}}{\sum_i(X_i - \bar{X})^2}}
 \]
+
+and the standard error of the intercept $a$ is given by:
+
+\[
+SE_a = \sqrt{MS_\text{residual}\left(\frac{1}{n} + \frac{\bar{X}^2}{\sum_i(X_i - \bar{X})^2}\right)}
+\]
+
+Standard errors of the slope and intercept are available from the `summary` function.
 
 # t-test of regression slope
 
@@ -129,7 +182,7 @@ To test a null hypothesis about the population slope, $H_0: \beta = \beta_{0}$, 
 t = \frac{b - B_{H_0}}{SE_b}
 \]
 
-and compare the test statistic to the t-distribution with $n-2$ degrees of freedom to estimate a p-value.
+and compare the test statistic to the t-distribution with $n-2$ degrees of freedom to estimate a p-value. This information is available from the `summary` function.
 
 # Confidence interval for the regression slope
 
@@ -139,7 +192,7 @@ Confidence intervals for the regression slope are given by:
 b \pm t_{\alpha(2),n-2}\ SE_b
 \]
 
-where $SE_b$ is the standard error of the regression slope as defined above, and $ t_{\alpha(2),n-2}$ is the two-tailed critical value of the t-distribution with $df = n-2$.
+where $SE_b$ is the standard error of the regression slope as defined above, and $t_{\alpha(2),n-2}$ is the two-tailed critical value of the t-distribution with $df = n-2$.
 
 # Confidence bands for the regression
 
@@ -154,6 +207,14 @@ where
 \[
 SE[\hat{Y}] = \sqrt{MS_\text{residual}\left(\frac{1}{n} + \frac{(X_i - \bar{X})^2}{\sum_i(X_i - \bar{X})^2}\right)}
 \]
+
+## Drawing regression confidence bands in ggplot
+
+We can change the `se` argument of `geom_smooth` to draw confidence bands for the regression.
+
+```{r}
+lions.plot + geom_smooth(method = lm, se = TRUE)
+```
 
 
 

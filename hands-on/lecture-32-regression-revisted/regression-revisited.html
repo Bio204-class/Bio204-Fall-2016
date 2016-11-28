@@ -127,14 +127,21 @@ $(document).ready(function () {
 <ul>
 <li><a href="#review-anova-as-partitioning-of-sum-of-squares">Review: ANOVA as Partitioning of Sum of Squares</a></li>
 <li><a href="#review-least-squares-regression">Review: Least Squares Regression</a></li>
-<li><a href="#example-data-lion-age-predicted-from-facial-pigmentation">Example data: Lion age predicted from facial pigmentation</a></li>
-<li><a href="#variance-of-the-model-and-residuals">Variance of the Model and Residuals</a></li>
-<li><a href="#using-an-anova-table-to-summarize-a-regression-model">Using an ANOVA table to summarize a regression model</a></li>
+<li><a href="#example-data-lion-age-predicted-from-facial-pigmentation">Example data: Lion age predicted from facial pigmentation</a><ul>
+<li><a href="#fitting-the-regression-model-in-r">Fitting the regression model in R</a></li>
+<li><a href="#plotting-the-regression-fit-using-ggplot">Plotting the regression fit using ggplot</a></li>
+</ul></li>
 <li><a href="#variance-explained-by-a-regression-model">Variance “explained” by a regression model</a></li>
-<li><a href="#standard-error-of-the-regression-slope">Standard error of the regression slope</a></li>
+<li><a href="#variance-of-the-model-and-residuals">Variance of the Model and Residuals</a></li>
+<li><a href="#using-an-anova-table-to-summarize-a-regression-model">Using an ANOVA table to summarize a regression model</a><ul>
+<li><a href="#generating-an-anova-table-from-a-regression-model-in-r">Generating an ANOVA table from a regression model in R</a></li>
+</ul></li>
+<li><a href="#standard-error-of-the-regression-slope-and-intercept">Standard error of the regression slope and intercept</a></li>
 <li><a href="#t-test-of-regression-slope">t-test of regression slope</a></li>
 <li><a href="#confidence-interval-for-the-regression-slope">Confidence interval for the regression slope</a></li>
-<li><a href="#confidence-bands-for-the-regression">Confidence bands for the regression</a></li>
+<li><a href="#confidence-bands-for-the-regression">Confidence bands for the regression</a><ul>
+<li><a href="#drawing-regression-confidence-bands-in-ggplot">Drawing regression confidence bands in ggplot</a></li>
+</ul></li>
 </ul>
 </div>
 
@@ -172,18 +179,70 @@ SS_{\text{total}} = SS_{\text{regression}} + SS_{\text{residual}}
 </div>
 <div id="example-data-lion-age-predicted-from-facial-pigmentation" class="section level1">
 <h1>Example data: Lion age predicted from facial pigmentation</h1>
-<p>To illustrate our linear regression calculations we’ll use a data set from a study of African lions. A study by Whitman et al. (2004) showed thte amount of black coloring on the nose of male lions increases with age, and suggested that this might be used to estimate the age of unknown lions. The lion data set is available at this link , and the bivariate relationship between age and proportion of black pigmentation looks like this:</p>
+<p>To illustrate our linear regression calculations we’ll use a data set from a study of African lions. A study by Whitman et al. (2004) showed thte amount of black coloring on the nose of male lions increases with age, and suggested that this might be used to estimate the age of unknown lions. The lion data set is available at this link <a href="https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/datasets/lion-noses.csv">lion-noses.csv</a> , and the bivariate relationship between age and proportion of black pigmentation looks like this:</p>
+<pre class="r"><code>library(ggplot2)
+theme_set(theme_classic())
+
+# load data
+lions &lt;- read.csv(&quot;https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/datasets/lion-noses.csv&quot;)
+
+# plot data
+lions.plot &lt;- ggplot(lions, aes(x = proportionBlack, y = ageInYears)) + 
+  geom_point(color=&quot;red&quot;, size = 2) +
+  labs(x = &quot;Proportion black&quot;, y = &quot;Age (years)&quot;)</code></pre>
+<div id="fitting-the-regression-model-in-r" class="section level2">
+<h2>Fitting the regression model in R</h2>
+<p>Fitting linear regression models in R is simple using the <code>lm</code> function, and we can generate summary summary statistics by applying the <code>summary</code> function to the object returned by <code>lm</code>:</p>
+<pre class="r"><code>lm.lions &lt;- lm(ageInYears ~ proportionBlack, lions)
+summary(lm.lions)</code></pre>
+<pre><code>
+Call:
+lm(formula = ageInYears ~ proportionBlack, data = lions)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-2.545 -1.112 -0.528  0.963  4.342 
+
+Coefficients:
+                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)        0.879      0.569    1.55     0.13    
+proportionBlack   10.647      1.510    7.05  7.7e-08 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.67 on 30 degrees of freedom
+Multiple R-squared:  0.624, Adjusted R-squared:  0.611 
+F-statistic: 49.8 on 1 and 30 DF,  p-value: 7.68e-08</code></pre>
+</div>
+<div id="plotting-the-regression-fit-using-ggplot" class="section level2">
+<h2>Plotting the regression fit using ggplot</h2>
+<p>To plot the regression model in ggplot we can add a call to the <code>geom_smooth</code> geom:</p>
+<pre class="r"><code>lions.plot + geom_smooth(method = lm, se = FALSE)</code></pre>
+<p><img src="data:image/png;base64,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" width="480" /></p>
+</div>
+</div>
+<div id="variance-explained-by-a-regression-model" class="section level1">
+<h1>Variance “explained” by a regression model</h1>
+<p>We can use the sum-of-square decomposition to understand the relative proportion of variance “explained” (accounted for) by the regression model.</p>
+<p>We call this quantity the “Coefficient of Determination”, designated <span class="math inline">\(R^2\)</span>.</p>
+<p><span class="math display">\[
+R^2 = \frac{SS_\text{regression}}{SS_\text{total}} = \left( 1 - \frac{SS_\text{residuals}}{SS_\text{total}} \right)
+\]</span></p>
+<p>The coefficient of determination is also useful in the context of ANOVA.</p>
+<p>We can extract the coefficient of determination from the summary as follows:</p>
+<pre class="r"><code>summary(lm.lions)$r.squared</code></pre>
+<pre><code>[1] 0.6238</code></pre>
 </div>
 <div id="variance-of-the-model-and-residuals" class="section level1">
 <h1>Variance of the Model and Residuals</h1>
 <p>In the same way that we calculated the group mean square (<span class="math inline">\(MS_\text{group}\)</span>) and error mean square (<span class="math inline">\(MS_\text{error}\)</span>) in ANOVA, we can calculate a model mean square (<span class="math inline">\(MS_\text{regression}\)</span>) and residual mean square (<span class="math inline">\(MS_\text{residual}\)</span>) as follows:</p>
 <p><span class="math display">\[
-MS_\text{regression} =\frac{SS_\text{regression}}{df_\text{regression}} 
+MS_\text{regression} =\frac{SS_\text{regression}}{df_\text{regression}} = \sum_i(\hat{Y}_i - \bar{Y})^2
 \]</span></p>
 <p>In bivariate regression, the regression degrees of freedom, <span class="math inline">\(df_\text{regression} = 1\)</span>.</p>
 <p>The residual mean square is given by:</p>
 <p><span class="math display">\[
-MS_\text{regression} =\frac{SS_\text{residual}}{df_\text{residual}} 
+MS_\text{residual} =\frac{SS_\text{residual}}{df_\text{residual}} = \frac{\sum_i(Y_i - \hat{Y}_i)^2}{n-2}
 \]</span></p>
 <p>where <span class="math inline">\(df_\text{residual} = n - 2\)</span>.</p>
 </div>
@@ -217,7 +276,7 @@ MS_\text{regression} =\frac{SS_\text{residual}}{df_\text{residual}}
 </tr>
 <tr class="even">
 <td align="left">Residual</td>
-<td align="left"><span class="math inline">\(SS_\text{residual}\)</span></td>
+<td align="left"><span class="math inline">\(SS_\text{residual} = \sum_i(Y_i - \hat{Y}_i)^2\)</span></td>
 <td align="center">n-2</td>
 <td align="center"><span class="math inline">\(\frac{SS_\text{residual}}{df_\text{residual}}\)</span></td>
 <td align="center"></td>
@@ -232,22 +291,31 @@ MS_\text{regression} =\frac{SS_\text{residual}}{df_\text{residual}}
 </tbody>
 </table>
 <p>The calculated F-ratio can be compared to the corresponding F distribution, <span class="math inline">\(F_{1,n-2}\)</span>, to test the null hypothesis that the slop of the regression equals zero.</p>
+<div id="generating-an-anova-table-from-a-regression-model-in-r" class="section level2">
+<h2>Generating an ANOVA table from a regression model in R</h2>
+<p>To get an ANOVA table from a regression fit by <code>lm</code> we can simply apply the <code>anova</code> function to the linear model object as shown below:</p>
+<pre class="r"><code>anova(lm.lions)</code></pre>
+<pre><code>Analysis of Variance Table
+
+Response: ageInYears
+                Df Sum Sq Mean Sq F value  Pr(&gt;F)    
+proportionBlack  1  138.5   138.5    49.8 7.7e-08 ***
+Residuals       30   83.5     2.8                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div id="variance-explained-by-a-regression-model" class="section level1">
-<h1>Variance “explained” by a regression model</h1>
-<p>We can further use the sum-of-square decomposition to understand the relative proportion of variance “explained” (accounted for) by the regression model.</p>
-<p>We call this quantity the “Coefficient of Determination”, designated <span class="math inline">\(R^2\)</span>.</p>
-<p><span class="math display">\[
-R^2 = \frac{SS_\text{regression}}{SS_\text{total}} = \left( 1 - \frac{SS_\text{residuals}}{SS_\text{total}} \right)
-\]</span></p>
-<p>The coefficient of determination is also useful in the context of ANOVA.</p>
 </div>
-<div id="standard-error-of-the-regression-slope" class="section level1">
-<h1>Standard error of the regression slope</h1>
+<div id="standard-error-of-the-regression-slope-and-intercept" class="section level1">
+<h1>Standard error of the regression slope and intercept</h1>
 <p>Like all the other statistical estimators we’ve looked at over the course of the semester, there is uncertainty associated with the sample estimate of the slope <span class="math inline">\(b\)</span>, which is an estimate of an underlying population slope <span class="math inline">\(\beta\)</span>. The standard error of <span class="math inline">\(b\)</span> is given by:</p>
 <p><span class="math display">\[
 SE_b = \sqrt{\frac{MS_\text{residual}}{\sum_i(X_i - \bar{X})^2}}
 \]</span></p>
+<p>and the standard error of the intercept <span class="math inline">\(a\)</span> is given by:</p>
+<p><span class="math display">\[
+SE_a = \sqrt{MS_\text{residual}\left(\frac{1}{n} + \frac{\bar{X}^2}{\sum_i(X_i - \bar{X})^2}\right)}
+\]</span></p>
+<p>Standard errors of the slope and intercept are available from the <code>summary</code> function.</p>
 </div>
 <div id="t-test-of-regression-slope" class="section level1">
 <h1>t-test of regression slope</h1>
@@ -255,7 +323,7 @@ SE_b = \sqrt{\frac{MS_\text{residual}}{\sum_i(X_i - \bar{X})^2}}
 <p><span class="math display">\[
 t = \frac{b - B_{H_0}}{SE_b}
 \]</span></p>
-<p>and compare the test statistic to the t-distribution with <span class="math inline">\(n-2\)</span> degrees of freedom to estimate a p-value.</p>
+<p>and compare the test statistic to the t-distribution with <span class="math inline">\(n-2\)</span> degrees of freedom to estimate a p-value. This information is available from the <code>summary</code> function.</p>
 </div>
 <div id="confidence-interval-for-the-regression-slope" class="section level1">
 <h1>Confidence interval for the regression slope</h1>
@@ -263,7 +331,7 @@ t = \frac{b - B_{H_0}}{SE_b}
 <p><span class="math display">\[
 b \pm t_{\alpha(2),n-2}\ SE_b
 \]</span></p>
-<p>where <span class="math inline">\(SE_b\)</span> is the standard error of the regression slope as defined above, and $ t_{(2),n-2}$ is the two-tailed critical value of the t-distribution with <span class="math inline">\(df = n-2\)</span>.</p>
+<p>where <span class="math inline">\(SE_b\)</span> is the standard error of the regression slope as defined above, and <span class="math inline">\(t_{\alpha(2),n-2}\)</span> is the two-tailed critical value of the t-distribution with <span class="math inline">\(df = n-2\)</span>.</p>
 </div>
 <div id="confidence-bands-for-the-regression" class="section level1">
 <h1>Confidence bands for the regression</h1>
@@ -275,6 +343,12 @@ b \pm t_{\alpha(2),n-2}\ SE_b
 <p><span class="math display">\[
 SE[\hat{Y}] = \sqrt{MS_\text{residual}\left(\frac{1}{n} + \frac{(X_i - \bar{X})^2}{\sum_i(X_i - \bar{X})^2}\right)}
 \]</span></p>
+<div id="drawing-regression-confidence-bands-in-ggplot" class="section level2">
+<h2>Drawing regression confidence bands in ggplot</h2>
+<p>We can change the <code>se</code> argument of <code>geom_smooth</code> to draw confidence bands for the regression.</p>
+<pre class="r"><code>lions.plot + geom_smooth(method = lm, se = TRUE)</code></pre>
+<p><img src="data:image/png;base64,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" width="480" /></p>
+</div>
 </div>
 
 
