@@ -53,9 +53,9 @@ where $b$ is the slope and $a$ is the intercept, that minimizes the quantity:
 
 ![](./regression-minimization.png)
 
-Our goal is to find the linear function of $X$ that minimizes the **squared deviations** of the observed $Y$ values from the linear model prediction.  Another way to state this is that we're trying to finding the linear function of $X$ that minimizes the sum-of-squared residuals from the regression model.  
+Our goal is to find the linear function of $X$ that minimizes the **sum of squared deviations** of the observed $Y$ values from the linear model prediction.  
 
-In parallel to the partitioning we discussed for ANOVA, linear least squares regression can also be interpretted as a sum-of-squares partitioning:
+Like ANOVA, linear least squares regression can also be interpretted as a sum-of-squares partitioning:
 
 \[
 SS_{\text{total}} = SS_{\text{regression}} + SS_{\text{residual}}
@@ -76,6 +76,8 @@ lions <- read.csv("https://github.com/Bio204-class/Bio204-Fall-2016/raw/master/d
 lions.plot <- ggplot(lions, aes(x = proportionBlack, y = ageInYears)) + 
   geom_point(color="red", size = 2) +
   labs(x = "Proportion black", y = "Age (years)")
+
+lions.plot
 ```
 
 ## Fitting the regression model in R
@@ -94,6 +96,7 @@ To plot the regression model in ggplot we can add a call to the `geom_smooth` ge
 ```{r}
 lions.plot + geom_smooth(method = lm, se = FALSE)
 ```
+
 
 
 # Variance "explained" by a regression model
@@ -155,6 +158,18 @@ To get an ANOVA table from a regression fit by `lm` we can simply apply the `ano
 anova(lm.lions)
 ```
 
+
+
+# Assumptions of linear regression
+
+The following assumption must be met for regression confidence intervals and hypothesis tests to be meaningful
+
+* The relationship between X and Y is linear
+* At each value of X, the distribution of possible Y values is normal
+* The variance of Y-values is the same at all values of X
+* At each value of X, the Y-measurements represent a random sample from the population of possible Y-values
+
+![](./whitlock_17.5-1.jpg)
 
 
 
