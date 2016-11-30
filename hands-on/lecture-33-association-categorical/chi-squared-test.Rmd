@@ -71,17 +71,39 @@ addmargins(table(titanic$sex, titanic$survived))
 `xtabs` provides an alternate way to create a contingency table using a formula based interface.
 
 ```{r}
-addmargins(xtabs(~ sex + survived, titanic))
+sex.by.survived <- xtabs(~ sex + survived, titanic)
+sex.by.survived
+```
+
+## Mosaic plots
+
+A mosic plot is a useful way to visualize a contigency table.
+
+```{r}
+mosaicplot(sex.by.survived,
+           color=c("steelblue","firebrick"),
+           main="Sex x Survival, Titanic Passengers")
 ```
 
 # Expected counts
 
 If the two categorical variables were independent than we would expect that the count in each cell of the contigency table to equal the product of the marginal probabilities times the total number of observations.
 
+Here are the marginal probabilities for sex and survival in the Titanic data set:
+```{r}
+# marginal probabilities for rows of table (sex)
+margin.table(sex.by.survived, margin = 1)/sum(sex.by.survived)
+
+# marginal probabilities for cols of table (survived)
+margin.table(sex.by.survived, margin = 2)/sum(sex.by.survived)
+```
+
+## Calculating the expected counts
+
 We can calculate the expected counts based the marginal probabilities as follows:
 
 ```{r}
-observed.counts <- xtabs(~ sex + survived, titanic)
+observed.counts <- sex.by.survived
 
 # get sum over rows and columns
 total.ct <- sum(observed.counts)
@@ -118,7 +140,7 @@ observed.counts
 
 # The $\chi^2$-statistic
 
-We can calculate a new test statistic, we'll call $\chi^2$ (chi-squared), as the sum of
+To summarize the overall divergence between observed and expected values we'll  calculate a new test statistic, we'll call $\chi^2$ (chi-squared), which is defined as:
 
 \begin{align}
 \chi^2 &= \frac{(O_{11} - E_{11})^2}{E_{11}} + \frac{(O_{12} - E_{12})^2}{E_{12}} + \cdots + \frac{(O_{mn} - E_{mn})^2}{E_{mn}} \\
@@ -142,7 +164,7 @@ titanic.chisq
 
 Under the null hypothesis that the categorical variables are independent the $\chi^2$-statistic has a sampling distribution called the $\chi^2$-distribution.  The $\chi^2$-distribution takes a single parameter, degree of freedom (df), which for the $\chi^2$ test of independence is equal to $(m-1)(n-1)$ where $m$ and $n$ are the number of categories in the two variables.
 
-For the Titanic example, $m = 2$ and $n = 2$, therefore the degrees of freedom, $df = 1$.  The $\chi^2_{1}$ distribution looks like this:
+For the Titanic example, $m = 2$ and $n = 2$, therefore the degrees of freedom, $df = 1$.  The $\chi^2_{df=1}$ distribution looks like this:
 
 ```{r}
 library(ggplot2)
@@ -152,6 +174,20 @@ qplot(x = x, y = d, geom="line",  color=I("steelblue"),
       xlab = "Chi2", ylab="Density")
   
 ```
+
+Here is a figuring demonstrating the $\chi^2$ distributions for different degrees of freedom:
+
+```{r, fig.width = 6, fig.height = 4}
+ggplot(data.frame(x = c(0,8)), aes(x)) + 
+  stat_function(fun=dchisq, args=list(df = 1), aes(color="df=1")) + 
+  stat_function(fun=dchisq, args=list(df = 2), aes(color="df=2")) + 
+  stat_function(fun=dchisq, args=list(df = 3), aes(color="df=3")) + 
+  stat_function(fun=dchisq, args=list(df = 5), aes(color="df=5")) +
+  scale_colour_manual("df", values = c("steelblue", "firebrick", "forestgreen", "goldenrod"))
+```
+
+
+# Calculating a p-value
 
 We can use `pchisq` to calculate the probability of observing a $\chi^2$ value at least as extreme as the one we observed under the null hypothesis of no association among the categorical variables:
 
