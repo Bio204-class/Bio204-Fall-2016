@@ -1,0 +1,199 @@
+---
+title: "Testing for Association between Categorical Variables Using the Chi-squared Test"
+author: "Paul M. Magwene"
+date: "November 30, 2016"
+output:
+  html_document:
+    fig_height: 4
+    fig_width: 5
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: '2'
+  html_notebook:
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: 2
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      comment=NA, warning = FALSE, results="markup",
+                      message = FALSE, cache = FALSE)
+options(digits = 4)
+```
+
+# Association Between Categorical Variables
+
+A standard approach for testing the independence/dependence of a pair of categorical variables is to use a $\chi^2$ (Chi-squared) test of independence. 
+
+The null and alternative hypotheses for the $\chi^2$ test are as follows:
+
+* $H_0$: the two categorical variables are independent
+* $H_A$: the two categorical variables are dependent
+
+# Contingency tables of observed counts
+
+We typically depict the relationship between categorical variables using a "contingency table".
+
+|       | B1                  | B2                  | Total                               |
+|-------|---------------------|---------------------|-------------------------------------|
+| A1    | $O_{11}$            | $O_{12}$            | $O_{11}$+$O_{12}$                   |
+| A2    | $O_{21}$            | $O_{22}$            | $O_{12}$+$O_{22}$                   |
+| Total | $O_{11}$+$O_{21}$   | $O_{12}$+$O_{22}$   | $O_{11}$+$O_{12}$+$O_{12}$+$O_{22}$ |
+
+The rows and columns indicate the different categories for variables A and B respectively, and the cells, $O_{ij}$, give the counts of the number of observations for the corresponding combination of A and B.  For example, the cell $O_{11}$ gives the number of observations that that belong to both the category A1 and B1, while $O_{12}$ gives the number that are both A1 and B2, etc.
+
+
+# Example data set: Titanic passengers
+
+Let's revisit a data set we used when we discussed logistic regression that contains information about passengers on the Titanic.
+
+[titanic.csv](https://github.com/pmagwene/Bio723/raw/master/datasets/titanic.csv) includes information such as sex, age, passenger class (1st, 2nd, 3rd), and whether or not a passenger survived the sinking of the ship (0 = died, 1 = survived).  We'll use the this data set to illustrate the key steps of conducting a $\chi^2$ test.
+
+## Constructing a contingency table in R
+
+The R function `table` provides a simple way to construct contingency tables.  Here's how we can use it:
+
+```{r}
+titanic <- read.csv("https://github.com/pmagwene/Bio723/raw/master/datasets/titanic.csv")
+
+table(titanic$sex, titanic$survived)
+```
+
+`table` doesn't produce the marginal counts. However we can easily add those by including a call to `addmargins`:
+
+```{r}
+addmargins(table(titanic$sex, titanic$survived))
+```
+
+`xtabs` provides an alternate way to create a contingency table using a formula based interface.
+
+```{r}
+addmargins(xtabs(~ sex + survived, titanic))
+```
+
+# Expected counts
+
+If the two categorical variables were independent than we would expect that the count in each cell of the contigency table to equal the product of the marginal probabilities times the total number of observations.
+
+We can calculate the expected counts based the marginal probabilities as follows:
+
+```{r}
+observed.counts <- xtabs(~ sex + survived, titanic)
+
+# get sum over rows and columns
+total.ct <- sum(observed.counts)
+total.ct
+
+# get sums and probabilities over rows
+row.sums <- margin.table(observed.counts, margin = 1)
+row.probs <- row.sums/total.ct
+row.sums
+
+# get sum over columns
+col.sums <- margin.table(observed.counts, margin = 2)
+col.probs <- col.sums/total.ct
+col.sums
+
+# calculate expected probabilities
+# the `outer` function gives the outer product -- all the pairwise multiples
+# of the two vectors passed to it
+expected.probs <- outer(row.probs, col.probs)
+expected.probs
+
+# and now calculate the expected counts
+expected.counts <- expected.probs * total.ct
+expected.counts
+```
+
+As a reminder, here are the observed counts. Compare this to the expected counts calculated above:
+
+```{r}
+observed.counts
+```
+
+
+
+# The $\chi^2$-statistic
+
+We can calculate a new test statistic, we'll call $\chi^2$ (chi-squared), as the sum of
+
+\begin{align}
+\chi^2 &= \frac{(O_{11} - E_{11})^2}{E_{11}} + \frac{(O_{12} - E_{12})^2}{E_{12}} + \cdots + \frac{(O_{mn} - E_{mn})^2}{E_{mn}} \\
+\\
+&= \sum_{i=1}^{m}\sum_{j=1}^{n} \frac{(O_{ij} - E_{ij})^2}{E_{ij}}
+\end{align}
+
+where $m$ and $n$ are the number of categories of the two variables under consideration.
+
+We can think of the $\chi^2$-statistic as the sum of the normalized squared differences between observed and expected counts (where each cell is normalized by the expected counts).
+
+Here's the calculation of the $\chi^2$-statistic for the Titanic example:
+
+```{r}
+titanic.chisq <- sum((observed.counts - expected.counts)**2/expected.counts)
+titanic.chisq
+```
+
+
+# The $\chi^2$-distribution
+
+Under the null hypothesis that the categorical variables are independent the $\chi^2$-statistic has a sampling distribution called the $\chi^2$-distribution.  The $\chi^2$-distribution takes a single parameter, degree of freedom (df), which for the $\chi^2$ test of independence is equal to $(m-1)(n-1)$ where $m$ and $n$ are the number of categories in the two variables.
+
+For the Titanic example, $m = 2$ and $n = 2$, therefore the degrees of freedom, $df = 1$.  The $\chi^2_{1}$ distribution looks like this:
+
+```{r}
+library(ggplot2)
+x <- seq(0, 8, length.out = 300)
+d <- dchisq(x, df = 1)
+qplot(x = x, y = d, geom="line",  color=I("steelblue"),
+      xlab = "Chi2", ylab="Density")
+  
+```
+
+We can use `pchisq` to calculate the probability of observing a $\chi^2$ value at least as extreme as the one we observed under the null hypothesis of no association among the categorical variables:
+
+```{r}
+pchisq(titanic.chisq, df = 1, lower.tail = FALSE)
+```
+
+This is **very strong** evidence upon which to reject the null hypothesis!
+
+# Simple $\chi^2$ tests in R
+
+$\chi^2$ tests are a very common type of analysis. Therefore R has a built-in `chisq.test` function to make the calculations easy.  Here's how to use it:
+
+```{r}
+chi2.titanic <- chisq.test(titanic$sex, titanic$survived, correct = FALSE)
+
+# summary overview, note rounding
+chi2.titanic
+
+# observed counts
+chi2.titanic$observed
+
+# expected counts
+chi2.titanic$expected
+
+# chi2 statistic
+chi2.titanic$statistic
+
+# corresponding p-value
+chi2.titanic$p.value
+```
+
+Note that I set `correct = FALSE`.  This stops R from applying what is called "Yate's Continuity Correction", which is only appropriate when one or more of the counts are very small (<10).
+
+Note too that the summary output from `chisq.test` rounds the $\chi^2$ statistic and the corresponding p-value, so if you want the exact values you need to get them explicitly.
+
+# Your turn: Bumpus' bird data
+
+Bumpus (1898) described a sample of house sparrows which he collected after a very severe storm. The sample included 136 birds, sixty four of which perished during the storm. Also included in his description were a variety of morphological measurements on the birds and information about their sex and age (for male birds). This data set has become a benchmark in the evolutionary biology literature for demonstrating methods for analyzing natural selection. The bumpus data set is available from the class website as tab-delimited file called [bumpus-data.txt]("https://github.com/Bio204-class/bio204-datasets/raw/master/bumpus-data.txt").
+
+Bumpus, H. C. 1898. The elimination of the unfit as illustrated by the introduced sparrow, Passer domesticus. (A fourth contribution to the study of variation.) Biol. Lectures: Woods Hole Marine Biological Laboratory, 209--225.
+
+## Assignment (5 pts)
+
+The variables "sex" and "survived" contain information on the sex of each bird, and whether they survived the storm.  Carry out a $\chi^2$-test to test the hypothesis that there is a relationship between sex and survival.  What is your conclusion based on this test?  Show your work.
