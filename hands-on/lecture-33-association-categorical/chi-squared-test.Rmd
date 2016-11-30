@@ -226,7 +226,7 @@ Note too that the summary output from `chisq.test` rounds the $\chi^2$ statistic
 
 # Your turn: Bumpus' bird data
 
-Bumpus (1898) described a sample of house sparrows which he collected after a very severe storm. The sample included 136 birds, sixty four of which perished during the storm. Also included in his description were a variety of morphological measurements on the birds and information about their sex and age (for male birds). This data set has become a benchmark in the evolutionary biology literature for demonstrating methods for analyzing natural selection. The bumpus data set is available from the class website as tab-delimited file called [bumpus-data.txt]("https://github.com/Bio204-class/bio204-datasets/raw/master/bumpus-data.txt").
+Bumpus (1898) described a sample of house sparrows which he collected after a very severe storm. The sample included 136 birds, sixty four of which perished during the storm. Also included in his description were a variety of morphological measurements on the birds and information about their sex and age (for male birds). This data set has become a benchmark in the evolutionary biology literature for demonstrating methods for analyzing natural selection. The bumpus data set is available from the class website as tab-delimited file called [bumpus-data.txt](https://github.com/Bio204-class/bio204-datasets/raw/master/bumpus-data.txt) .
 
 Bumpus, H. C. 1898. The elimination of the unfit as illustrated by the introduced sparrow, Passer domesticus. (A fourth contribution to the study of variation.) Biol. Lectures: Woods Hole Marine Biological Laboratory, 209--225.
 
