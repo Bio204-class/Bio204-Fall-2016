@@ -21,14 +21,46 @@ date:   07 December 2016
 
 ## Visual tools: normal quantile plot
 
-![](./whitlock_13.1-3.jpg)
+![](./whitlock_13.1-3.jpg){height=2in}
+
+R functions:
+
+ - `qqplot` and `qqline`, set argument `datax=TRUE` to plot observed data on x-axis like in figure above
 
 
 ## Example data set: Comparing biomass between protected and unprotected marine sites
 
+from Whitlock and Schluter:
+
+ - Halpern (2003) posed the equstion: Aare reserves effective in preserving marine wildlife?
+ - Compared biomass in each of 32 marine reserves to control (non-reserve) locations
+ - Calculate a "biomass ratio" as total mass of all marine plants and animals per unit area of reserve dividided by same quantity in unprotected control
+ 
+ Null and alternative hypotheses
+
+  - $H_0$: the mean biomass ratio is unaffected by reserve protection ($\mu = 1$)
+  - $H_A$: the mean biomass ratio is affected by reserve protection ($\mu \neq 1$)
+
+## Histogram and Normal quantile plot of biomass data
+
 ![](./whitlock_13.1-4.jpg)
 
+
+
 ## A formal test for normality: Shapiro-Wilk Test
+
+Essentially a regression of ordered sample values on corresponding expected normal order statistics.
+
+ * $H_0$: the observed data is drawn from a population with normally distributed values
+ * $H_A$: the observed data is a drawn from a population where distribution is not normal
+
+Compare Shapiro-Wilk test statistics to expected sampling distribution under $H_0$.
+
+ * P-value < significance threshold, $\alpha \rightarrow$ evidence reject null hypothesis
+
+R function:
+
+ * `shapiro.test`
 
 
 # Data transformations
@@ -61,11 +93,11 @@ Tends to work well when:
 ![](./whitlock_13.3-1l.jpg){height=1.5in}\ ![](./whitlock_13.3-1r.jpg){height=1.5in}
 
 
-## Log transformation of biomass ratio data set
+## Generate log transformation of biomass ratio data set
 
-## Cautions
+## Cautions re: Log transformation
 
-- $\bar{X'} \neq \ln[X]$
+- $\bar{X'} \neq \ln[\bar{X}]$
 - Often will do analyses in log transformed data, and then back transform to original scale to report *geometric mean*  and CIs to facilitate interpretation
 
 
@@ -75,17 +107,20 @@ $$
 X' = arcsin[\sqrt{X}]
 $$
 
-Used when data are proportions
+ - Used when data are proportions
+ - Values must be in range 0-1, divide by 100 if working with percentages
 
-## Square-root transformation
+Example:
+ 
+ * Average percent of Senecio integrifolius flowers producing seeds at six different field sites (Widen 1993):  29.8, 44.2, 58.3, 83.0, 78.2, 72
 
-$$
-X'  = \sqrt{X + 1/2}
-$$
 
-Used when the data are counts, such as number of eggs laid, number of bacterial colonies, number of mates acquired, etc.
 
 ## Other transformations
+
+Square-root transformation, $X'  = \sqrt{X + 1/2}$
+
+ - Used for count data (number of eggs laid, number of bacterial colonies, etc)
 
 Square transformation, $X' = X^2$
 
@@ -104,11 +139,29 @@ Reciprocal transformation, $X' = \frac{1}{X}$
 
 ## Sign test (alternative to one-sample t-test)
 
-Non-parameteric alternative to one-sample t-test
+ * Non-parameteric alternative to one-sample t-test
+ * Tests whether median of a population equals a null hypothesized value
+ * not very well powered
+
+R implementation
+
+ * can be done as a binomial test or using `signmedian.test` package
+
+
 
 ## Mann-Whitney U-test (alternative to two-sample t-test)
 
-Non-parameteric alternative to two-sample t-test
+* Non-parameteric alternative to two-sample t-test
+* Basic algorithm
+  - combine data from both groups rank all data from smallest to largest 
+  - Calculate a statistc, U, which summarizes sum of all pairwise comparisons of ranks between the two groups
+  - Compare observed U statistic to sampling distribution of U under null hypothesis of no difference in ranks between groups
+  - Equivalent to a test called "Wilcoxon rank-sum test"
+
+R implementation
+
+ - `wilcox.test`
+
 
 ## Kruskal-Wallis test (alternative to ANOVA)
 
