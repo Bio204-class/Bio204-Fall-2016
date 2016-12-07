@@ -137,6 +137,7 @@ Reciprocal transformation, $X' = \frac{1}{X}$
 
 # Non-parametric tests
 
+
 ## Sign test (alternative to one-sample t-test)
 
  * Non-parameteric alternative to one-sample t-test
@@ -147,16 +148,22 @@ R implementation
 
  * can be done as a binomial test or using `signmedian.test` package
 
+## Example data set, Cricket sexual cannabilism
+
+* Sage crickets, *Cyphoderris strepitans*, have unusual mating system. During mating, male offers his fleshy hind wings to female to eat.  Females thus get nutrition during mating. Question: Are females more likely to mate if they are hungy?
+
+* Data set (`SagebrushCrickets.csv`) compares time to mating (in hours) between starved and fed crickets
+
 
 
 ## Mann-Whitney U-test (alternative to two-sample t-test)
 
-* Non-parameteric alternative to two-sample t-test
-* Basic algorithm
-  - combine data from both groups rank all data from smallest to largest 
-  - Calculate a statistc, U, which summarizes sum of all pairwise comparisons of ranks between the two groups
-  - Compare observed U statistic to sampling distribution of U under null hypothesis of no difference in ranks between groups
-  - Equivalent to a test called "Wilcoxon rank-sum test"
+ * Non-parameteric alternative to two-sample t-test
+ * Basic algorithm
+   - combine data from both groups rank all data from smallest to largest 
+   - Calculate a teset statistic, U, which is based on sum of ranks for each group
+   - Compare observed U statistic to sampling distribution of U under null hypothesis of no difference in ranks between groups
+   - Equivalent to a test called "Wilcoxon rank-sum test"
 
 R implementation
 
@@ -165,8 +172,23 @@ R implementation
 
 ## Kruskal-Wallis test (alternative to ANOVA)
 
+ * Non parametric alternative to ANOVA
+ * Tests  for differences in medians of distributions for $k$ groups
+ * Equivalent of Mann-Whitney U Test for more than two groups
+ * Rank observations, use sum of ranks in different groups as test statistic
+
+R implementation
+
+- `kruskal.test`
+
 ## Spearman's rank correlation 
 
-## Assumptions of non-parametric tests
+ * Non-parametric method to Pearson's product moment correlation
+ * Specify `method = "spearman"` in `cor` function
+
 
 ## Power of non-parametric tests
+
+ * Generall less powered than parametric tests because based on less information (e.g. ranks only, ignoring magnitudes)
+
+ * Have little power when sample sizes are small (e.g. <5)
