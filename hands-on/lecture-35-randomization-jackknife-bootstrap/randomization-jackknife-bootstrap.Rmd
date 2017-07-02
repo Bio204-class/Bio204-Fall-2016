@@ -3,6 +3,11 @@ title: "Randomization, Jackknife, Bootstrap"
 author: "Paul M. Magwene"
 date: "December 05, 2016"
 output:
+  html_notebook:
+    highlight: default
+    theme: readable
+    toc: yes
+    toc_depth: 2
   html_document:
     fig_height: 4
     fig_width: 5
@@ -10,11 +15,6 @@ output:
     theme: readable
     toc: yes
     toc_depth: '2'
-  html_notebook:
-    highlight: default
-    theme: readable
-    toc: yes
-    toc_depth: 2
 ---
   
 ```{r setup, include=FALSE}
@@ -56,7 +56,10 @@ And we'll create a simple strip chart to visualize the data
 library(ggplot2)
 ggplot(jackals, aes(x = sex, y = mandible.length, color = sex)) + 
   geom_jitter(width=0.2, height=0,size=2,alpha=0.5)
+```
 
+Having done so, let's look at the male and female means and the difference between them:
+```{r}
 mean(males)
 mean(females)
 mean(males) - mean(females)

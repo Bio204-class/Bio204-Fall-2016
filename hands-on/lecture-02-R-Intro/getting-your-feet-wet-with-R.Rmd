@@ -35,8 +35,7 @@ In class we'll review the key parts of the RStudio interface.  Make sure you kno
 
 R comes with fairly extensive documentation and a simple help system. You can access HTML versions of the R documentation under the Help tab in Rstudio. The HTML documentation also includes information on any packages you've installed.Take a few minutes to browse through the R HTML documentation.
 
-The help system can be invoked from the R console  using the
-`help` function or the `?` operator.
+The help system can be invoked from the R console  using the `help` function or the `?` operator.
 
 ```{r}
 help(length)

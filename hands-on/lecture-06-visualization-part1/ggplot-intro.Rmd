@@ -39,15 +39,13 @@ library(ggplot2)
 
 # Geometric and aesthetic mappings in ggplot2
 
-ggplot2 considers two types of mappings from data to visual representations:  1) `geometry' or `geom' mappings which determine the type of geometric representation that a plot uses; and 2) `aesthetic mappings', which determine the way that data are represented in a plot (e.g. symbols, colors).  Both a geometric mapping and an aesthetic mapping are required to fully specify a plot.
+ggplot2 considers two types of mappings from data to visual representations:  1) "geometry" (`geoms` in ggplot) mappings which determine the type of geometric representation that a plot uses; and 2) "aesthetic mappings" (`aes` in the short-hand of ggplot), which determine the way that data are represented in a plot (e.g. symbols, colors).  Both a geometric mapping and an aesthetic mapping are required to fully specify a plot.
 
 The primary plotting function in ggplot2 is `ggplot`. The first argument to `ggplot` is always a data frame. The data frame is the one that ggplot will use to look for all the mappings that you define in the subsequent pieces of the plot.  
 
-The second piece of information that we need to draw our plot is the `geom'. All geoms are encoded as R functions. The syntax used to add them to a plot is simply a `+' sign.  There are many different ggplot geoms for different plot types. We'll explore a few of the built-in geoms in this chapter; additional geoms will come up in later weeks.
+The second piece of information that we need to draw our plot is the `geom`. All geoms are encoded as R functions. The syntax used to add them to a plot is simply a `+` sign.  There are many different ggplot geoms for different plot types. We'll explore a few of the built-in geoms in this chapter; additional geoms will come up in later weeks.
 
-The third bit of information we need is the aesthethic mapping, specifying which variables map to which aspects of the plot.  Aesthetic mappings are created using the `aes` function.  Aesthetic mappings can be passed either as the second argument to `ggplot` function *or* as arguments to geom functions. When you specify the aesthetics as an argument to ggplot, than they are used as the default for subsequent geoms.  Altherative you can supply different aesthetics for every geom, if you want to combine representations. 
-
-We'll illustrate both of these approaches below.
+The third bit of information we need is the aesthethic mapping, specifying which variables map to which aspects of the plot.  Aesthetic mappings are created using the `aes` function.  Aesthetic mappings can be passed either as the second argument to `ggplot` function *or* as arguments to geom functions. When you specify the aesthetics as an argument to ggplot, than they are used as the default for subsequent geoms.  Alternatively you can supply different aesthetics for every geom, if you want to combine representations. We'll illustrate both of these approaches below.
 
 # Test data set: iris
 
